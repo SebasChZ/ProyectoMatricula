@@ -4,23 +4,13 @@ const app = express()
 const path = require('path');
 const erorrHandler = require('./middleware/erorrHandler');
 const cors = require('cors');
+const corsOptions = require('./config/corsOptions');
 const controller = require('./controllers/MainController');
 const PORT = process.env.PORT || 3500;
 
 
 
-//Cross Origin Resource Sharing
-const whiteList = ['http://localhost:5173', 'http://localhost:3500']
-const corsOptions = {
-    origin: (origin, callback) =>{
-        if (whiteList.indexOf(origin) !== -1 ) {
-            callback(null, true)
-        } else {
-            callback(new Error('Not allowed by CORS'))
-        }
-    }, 
-    optionsSuccessStatus: 200
-}
+
 app.use(cors(corsOptions));
 
 // built-in middleware to handle urlencoded data
@@ -34,11 +24,9 @@ app.use(express.json());
 //serve static files
 //app.use(express.static(path.join(__dirname, '..', 'client', 'vite-project')))
 
-//This will be route any request comming from client 
-//app.use('/client/*', require('./routes/subdir.js'));
-
 //routers
-//app.use('/user', require('./routes/api/user'));
+app.use('/professor', require('./routes/api/professor'));
+app.use('/newUser', require('./routes/api/user'));
 
 app.post('/login', async(req, res) => {
     //nuevo usuario formato json

@@ -10,11 +10,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    type: {
-        type: Number,
-        required: true
+    roles: {
+         type: Number, 
+         default:   1
+
     }
 });
 
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('user', userSchema);
