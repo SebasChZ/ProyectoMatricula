@@ -4,7 +4,7 @@ import './index.css'
 
 export default function App(){
   return(
-    <LoginPage />,
-    <ForgotPasswordPage />
+    <LoginPage />
+    // <ForgotPasswordPage />
   )
 }

@@ -1,12 +1,12 @@
-import backgroundImage from "../img/backgroundLogin.jpg"; // importar el fondo del login
 import logoImage from "../img/logoTec.png"; // importar el logo del tec
 
 export function LoginPage(){
     const styles = {
-        backgroundImage: `url(${backgroundImage})`,
+        backgroundImage: "url(/src/img/backgroundLogin.jpg)",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundOpacity: '0.5',}
+        backgroundOpacity: '0.5'};
+    console.log(logoImage)
     return (
         <section style={styles}>
   <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">

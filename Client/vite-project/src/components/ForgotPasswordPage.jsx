@@ -1,15 +1,13 @@
-import backgroundImage from "../img/backgroundLogin.jpg"; // importar el fondo del login
-
 export function ForgotPasswordPage(){
     const styles = {
-        backgroundImage: `url(${backgroundImage})`,
+        backgroundImage: "url(/src/img/backgroundLogin.jpg)",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundOpacity: '0.5',}
+        backgroundOpacity: '0.5'};
     return(
         <section style={styles}>
             <div className='w-screen h-screen grid grid-rows-2 text-white text-4xl md:grid-cols-2'>
-                <div className=' w-full h-full bg-[backgroundImage] opacity-80 bg-center bg-cover w-full h-full centered md:h-screen opacity-80'>
+                <div className=' w-full h-full bg-[backgroundImage] opacity-80 bg-center bg-cover centered md:h-screen'>
                 </div>
 
                 {/* page 2 */}
