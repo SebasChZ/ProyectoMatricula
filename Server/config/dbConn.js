@@ -1,18 +1,28 @@
 const mongoose = require('mongoose');
 
-const connectDB = async () => {
-    try {
-        await mongoose.connect(process.env.MONGO_URI, {
-            useUnifiedTopology: true,
-            maxPoolSize: 50, 
-            wtimeoutMS: 2500,
-            useNewUrlParser: true
-
-        });
-        console.log('MongoDB connected');
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-module.exports = connectDB;
+async function dbConnect() {
+    // use mongoose to connect this app to our database on mongoDB using the DB_URL (connection string)
+    mongoose
+      .connect(
+          process.env.DB_URL,
+        {
+          //   these are options to ensure that the connection is done properly
+          useNewUrlParser: true, 
+  
+          useUnifiedTopology: true 
+  
+  
+  
+        }
+      )
+      .then(() => {
+        console.log("Successfully connected to MongoDB Atlas!");
+      })
+      .catch((error) => {
+        console.log("Unable to connect to MongoDB Atlas!");
+        console.error(error);
+  
+      });
+  }
+  
+module.exports = dbConnect;

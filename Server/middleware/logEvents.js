@@ -20,4 +20,9 @@ const logEvents = async (message, logName) => {
     }
 }
 
-module.exports = logEvents;
+const looger = (req, res, next) => {
+    logEvents(`${req.method}\t${req.url}`, 'server.log');
+    console.log(`${req.method}\t${req.path}`);
+};
+
+module.exports = {logEvents, looger};
