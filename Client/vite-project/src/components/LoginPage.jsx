@@ -28,7 +28,6 @@ export function LoginPage(){
             
     })};
 
-export function LoginPage(){
     const styles = {
         backgroundImage: "url(/src/img/backgroundLogin.jpg)",
         backgroundSize: 'cover',

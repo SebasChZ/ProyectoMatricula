@@ -5,7 +5,8 @@ import './index.css'
 
 export default function App(){
   return(
-    <LoginPage />
+    // <LoginPage />
     // <ForgotPasswordPage />
+    <Sidebar />
   )
 }
