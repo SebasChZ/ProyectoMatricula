@@ -1,4 +1,32 @@
+import { useState, useEffect } from "react"
+import Axios from "axios"
 import logoImage from "../img/logoTec.png"; // importar el logo del tec
+
+export function LoginPage(){
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const loginUser = () => {
+        
+        if (!email || !password) {
+            alert("Please fill all the fields")
+            return;
+          }
+        Axios.post("http://localhost:3500/login", {
+            email,
+            password
+        }).then((response) => {
+            console.log(response.data);
+            if (response.data) {
+                //localStorage.setItem("loggedIn", true);
+                //localStorage.setItem("user", JSON.stringify(response.data.user));
+                //window.location.href = "/home";
+                alert("User logged in");
+            }else{
+                alert("User has failed");
+            }
+            
+    })};
 
 export function LoginPage(){
     const styles = {
