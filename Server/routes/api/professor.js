@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const employeeController = require('../controllers/employeeController.js');
+const adminProfessorControllers = require('../../controllers/AdminProfessor');
 
 router.route('/')
-    .get(employeeController.getEmployees)
+    .get(adminProfessorControllers.getAllProfessor)
 
 
 router.route('/:id')
-    .get(employeeController.getEmployeeById)
+    .get(adminProfessorControllers.getProfessorById)
 
 
 module.exports = router;
