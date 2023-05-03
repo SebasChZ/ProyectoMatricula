@@ -40,17 +40,21 @@ const loginUser = async (req, res, next) => {
     try{
         //check for duplicate usernames in the db
         const userFound = await User.findOne({ email: email }).exec();
-        console.log(userFound.password);
+        console.log(userFound);
+        if (!userFound) {
+            return res.status(400).json({ message: 'User has no register' });
+        }
         if (userFound) {
             const match = await bcrypt.compare(password, userFound.password);
             if (match) {
-                res.status(200).json({ msg: 'User logged' });
+                res.status(200).json({ message: 'User logged perfectly ' });
             } else {
-                res.status(400).json({ msg: 'User not logged' });
+                res.status(400);
+                res.json({ message: 'User not logged' });
             }
         }
     }catch{
-        res.status(500).json({ msg: 'Server error' });
+        res.status(500).json({ message: 'Server error' });
     }
     next();
 }

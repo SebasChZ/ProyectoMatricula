@@ -26,19 +26,8 @@ app.use(express.json());
 
 //routers
 app.use('/professor', require('./routes/api/professor'));
-app.use('/newUser', require('./routes/api/user'));
+app.use('/login', require('./routes/api/user'));
 
-app.post('/login', async(req, res) => {
-    //nuevo usuario formato json
-    const objetoJson = {"name":"John", "age":30, "city":"New York"};
-
-    const { email, password } = req.body;
-    console.log(email, password);
-   
-    //await logEvents(message, logName);
-    res.send('false');
-
-});
 
 //custom middleware of error handling
 app.use(erorrHandler);
