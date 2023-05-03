@@ -8,5 +8,5 @@ router.route('/')
         console.log('newUser');
         
     })
-    .post(adminUserControllers.handleLoginUser);
+    .post(adminUserControllers.loginUser);
 module.exports = router;

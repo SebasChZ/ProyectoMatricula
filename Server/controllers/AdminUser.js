@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
-const handleNewUser = async (req, res, next) => {
+const registerUser = async (req, res, next) => {
     
     const { email, password } = req.body;
     if(!email || !password) {
@@ -30,7 +30,7 @@ const handleNewUser = async (req, res, next) => {
     next();
 }
 
-const handleLoginUser = async (req, res, next) => {
+const loginUser = async (req, res, next) => {
     
     const { email, password } = req.body;
     if(!email || !password) {
@@ -39,16 +39,15 @@ const handleLoginUser = async (req, res, next) => {
     
     try{
         //check for duplicate usernames in the db
-        const duplicate = await User.findOne({ email: email }).exec();
-        console.log(duplicate.password);
-        if (duplicate) {
-            bcrypt.compare(duplicate.password, password, (err, result) => {
-                if (result == true) {
-                    res.status(200).json({ msg: 'User logged' });
-                } else {
-                    res.status(400).json({ msg: 'User not logged' });
-                }
-            });
+        const userFound = await User.findOne({ email: email }).exec();
+        console.log(userFound.password);
+        if (userFound) {
+            const match = await bcrypt.compare(password, userFound.password);
+            if (match) {
+                res.status(200).json({ msg: 'User logged' });
+            } else {
+                res.status(400).json({ msg: 'User not logged' });
+            }
         }
     }catch{
         res.status(500).json({ msg: 'Server error' });
@@ -58,5 +57,5 @@ const handleLoginUser = async (req, res, next) => {
 
 
 module.exports = {
-    handleNewUser,
-    handleLoginUser};
+    registerUser,
+    loginUser};
