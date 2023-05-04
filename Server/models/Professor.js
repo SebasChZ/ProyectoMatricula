@@ -1,17 +1,14 @@
 const mongoose = require('mongoose');
-
-const ProfessorSchema = new Schema({
+const Schema = mongoose.Schema;
+const ProfessorSchema = new mongoose.Schema({
     code: {
-        type: String,
-        required: true
+        type: String, required: true
     },
     firstName: {
-        type: String,
-        required: true
+        type: String, required: true
     },
     lastName1: {
-        type: String,
-        required: true
+        type: String, required: true
     },
     lastName2: {
         type: String
@@ -26,12 +23,17 @@ const ProfessorSchema = new Schema({
         type: String
     },
     photo: {
-        type: Schema.Types.Mixed
+        type: String
+    },
+    branch: {
+         type: String 
+    },
+    count:{
+        type: Number
     },
     status: {
         type: Boolean, default: true
-    },
-});
+    }
+}, { collection: 'professor' });
 
-const objetoJson = { "name": "John", "age": 30, "city": "New York" };
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('Professor', ProfessorSchema);

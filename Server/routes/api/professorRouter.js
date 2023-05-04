@@ -4,9 +4,10 @@ const adminProfessorControllers = require('../../controllers/AdminProfessor');
 
 router.route('/')
     .get(adminProfessorControllers.getAllProfessor)
+    .post(adminProfessorControllers.registerProfessor)
 
 
-router.route('/:id')
+router.route('/cha')
     .get(adminProfessorControllers.getProfessorById)
 
 
