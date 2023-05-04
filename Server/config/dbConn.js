@@ -20,5 +20,11 @@ async function dbConnect() {
   
       });
   }
-  
-module.exports = dbConnect;
+
+// fution to disconnect from the database
+async function dbDisconnect() {
+    mongoose.connection.close()
+    //mongoose.disconnect();
+    console.log("Disconnected from MongoDB Atlas!");
+}
+module.exports = {dbConnect, dbDisconnect};
