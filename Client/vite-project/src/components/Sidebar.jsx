@@ -2,11 +2,10 @@ import logoTec from "../img/logoTECGray.svg";
 import { SidebarContent } from "./SidebarContent";
 import { useContext } from "react";
 
-export function Sidebar() {
-  const sidebarState = useContext({ sidebarState });
+export function Sidebar({ visibility }) {
   return (
     <>
-      <div id={sidebarState}>
+      <div className={visibility}>
         <button
           data-drawer-target="logo-sidebar"
           data-drawer-toggle="logo-sidebar"

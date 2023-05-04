@@ -7,18 +7,23 @@ import { createContext } from "react";
 import { useState } from "react";
 
 export default function App() {
-  const [user, setUser] = useState(false);
+  const [visibility, setVisibility] = useState("invisible");
+
+  function changeVisibility(visibility) {
+    setVisibility(visibility);
+  }
 
   return (
     <>
       <div>
-        <LoginPage />
-        <Sidebar />
+        <LoginPage changeVisibility={changeVisibility} />
+        <Sidebar visibility={visibility} />
         <div className="sm:ml-[256px]">
           <Routes>
             <Route path="/inicio" element={<h1>Inicio</h1>} />
             <Route path="/planes" element={<h1>Planes</h1>} />
             <Route path="/estudiantes" element={<h1>Estudiantes</h1>} />
+            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
           </Routes>
         </div>
       </div>

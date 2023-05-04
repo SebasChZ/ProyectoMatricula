@@ -3,11 +3,12 @@ import Axios from "axios";
 import logoImage from "../img/logoTec.png"; // importar el logo del tec
 import { Link } from "react-router-dom";
 
-export function LoginPage() {
+export function LoginPage({ changeVisibility }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const loginUser = () => {
+    let visibility = "invisible";
     if (!email || !password) {
       alert("Please fill all the fields");
       return;
@@ -19,6 +20,9 @@ export function LoginPage() {
       .then((response) => {
         if (response.data.message) {
           alert(response.data.message);
+          visibility = "visible";
+        } else {
+          alert("Login unsuccessful");
         }
       })
       .catch((error) => {
@@ -32,6 +36,7 @@ export function LoginPage() {
           alert(error.response.data.message);
         }
       });
+    changeVisibility(visibility);
   };
 
   const styles = {
@@ -107,7 +112,7 @@ export function LoginPage() {
 
               <p className="text-sm font-light text-002857 ">
                 <Link
-                  to="/ForgotPassword"
+                  to="/forgotPassword"
                   className="font-medium text-primary-1100 "
                 >
                   {" "}
