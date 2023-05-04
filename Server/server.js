@@ -5,7 +5,7 @@ const path = require('path');
 const erorrHandler = require('./middleware/erorrHandler');
 const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
-const controller = require('./controllers/MainController');
+const singletonConnexion = require('./controllers/SingeltonConnexion');
 const PORT = process.env.PORT || 3500;
 
 
@@ -21,12 +21,12 @@ app.use(express.urlencoded({ extended: false }));
 // built-in middleware for json 
 app.use(express.json());
 
-//serve static files
-//app.use(express.static(path.join(__dirname, '..', 'client', 'vite-project')))
+//serve static classSingleton
 
 //routers
-app.use('/professor', require('./routes/api/professor'));
-app.use('/login', require('./routes/api/user'));
+app.use('/login', require('./routes/api/userRouter'));
+app.use('/professor', require('./routes/api/professorRouter'));
+
 
 
 //custom middleware of error handling
