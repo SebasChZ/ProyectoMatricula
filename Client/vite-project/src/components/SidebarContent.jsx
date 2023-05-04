@@ -12,7 +12,7 @@ export function SidebarContent({ userType }) {
         <>
           <li>
             <Link
-              to="/"
+              to="/Inicio"
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <HomeIcon />
@@ -21,7 +21,7 @@ export function SidebarContent({ userType }) {
           </li>
           <li>
             <Link
-              to="/about"
+              to="/planes"
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <EventNoteIcon />
@@ -30,7 +30,7 @@ export function SidebarContent({ userType }) {
           </li>
           <li>
             <Link
-              to="/ForgotPassword"
+              to="/estudiantes"
               className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <GroupIcon />

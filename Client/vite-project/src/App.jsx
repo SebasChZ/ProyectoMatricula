@@ -3,17 +3,22 @@ import "./index.css";
 import { Route, Routes } from "react-router-dom";
 import { LoginPage } from "./views/LoginPage";
 import { ForgotPasswordPage } from "./views/ForgotPasswordPage";
+import { createContext } from "react";
+import { useState } from "react";
 
 export default function App() {
+  const [user, setUser] = useState(false);
+
   return (
     <>
       <div>
+        <LoginPage />
         <Sidebar />
         <div className="sm:ml-[256px]">
           <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="/about" element={<h1>About</h1>} />
-            <Route path="/ForgotPassword" element={<ForgotPasswordPage />} />
+            <Route path="/inicio" element={<h1>Inicio</h1>} />
+            <Route path="/planes" element={<h1>Planes</h1>} />
+            <Route path="/estudiantes" element={<h1>Estudiantes</h1>} />
           </Routes>
         </div>
       </div>
