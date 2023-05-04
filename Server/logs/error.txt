@@ -2,3 +2,16 @@
 20230503	08:11:28	e8507faa-9df2-4bf2-befd-93ba93af4dfc	Not allowed by CORS: Not allowed by CORS
 20230503	08:12:02	7d7dd379-d61a-45ca-bec4-729839752942	Not allowed by CORS: Not allowed by CORS
 20230503	08:13:05	2cca9858-5abb-41e6-a3ea-25081961bdd4	data is not defined: data is not defined
+20230503	19:36:35	2d6e1c08-d015-40b0-834d-7ffc55497430	Unexpected end of JSON input: Unexpected end of JSON input
+20230504	00:15:35	bfbd14e8-4d9e-4b98-8365-c58db42329f8	undefined: undefined
+20230504	00:39:41	500ad8c4-6ac2-4247-89c9-436c444f5bd7	undefined: undefined
+20230504	00:40:19	b4a001fd-1701-4af5-899f-a82da0ad0027	undefined: undefined
+20230504	00:40:43	e3aac720-14a2-4baf-9bad-912bf87bfb3f	undefined: undefined
+20230504	00:41:27	33e16645-c2b6-4a75-ad29-78163d888f2d	undefined: undefined
+20230504	00:42:02	481882f0-39c3-472e-822e-17ad87317b13	undefined: undefined
+20230504	00:42:30	036ccccc-f727-4387-850a-75eca2af8f4a	undefined: undefined
+20230504	00:42:46	6d8067e7-6d0c-4640-9ad4-119ae702572e	undefined: undefined
+20230504	00:42:55	2a977675-2a6d-4baa-91c0-cb5c88a54297	undefined: undefined
+20230504	00:43:16	cfdf5c04-aba5-4eed-b155-34e47114de5f	undefined: undefined
+20230504	00:43:29	d0d3171b-0f14-478c-925f-aaab39129560	undefined: undefined
+20230504	00:44:21	0526bb0d-f120-433e-b0dd-6f33a420574c	undefined: undefined
