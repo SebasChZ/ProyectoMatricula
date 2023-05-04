@@ -26,6 +26,7 @@ app.use(express.json());
 //routers
 app.use('/login', require('./routes/api/userRouter'));
 app.use('/professor', require('./routes/api/professorRouter'));
+app.use('/student', require('./routes/api/studentRouter'));
 
 
 
