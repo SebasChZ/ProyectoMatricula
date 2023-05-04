@@ -7,5 +7,5 @@ router.route('/')
         console.log('newUser');
         
     })
-    .post(adminUserControllers.registerUser);
+    .post(adminUserControllers.loginUser);
 module.exports = router;

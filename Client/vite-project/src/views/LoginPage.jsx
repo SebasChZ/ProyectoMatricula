@@ -19,6 +19,7 @@ export function LoginPage({ changeVisibility }) {
     })
       .then((response) => {
         if (response.data.message) {
+          console.log(response);
           alert(response.data.message);
           visibility = "visible";
         } else {
