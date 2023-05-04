@@ -8,7 +8,7 @@ router.route('/')
 router.route('/file')
     .get(adminStudentControllers.registerExcel)
 
-router.route('/:id')
+router.route('/id/:id')
     .get(adminStudentControllers.getAllAlphabetical)
 
 

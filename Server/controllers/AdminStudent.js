@@ -37,11 +37,14 @@ const getAllId = async (req, res, next) => {
 const registerExcel = async (req, res, next) => {
 
     try {
-        data = reader();
+        const fileName = req.body.filename;
+        console.log("fileName: ", fileName);
+        data = await reader(fileName);
         await SingeltonDAO.registerExcel(data,req, res, next);
+        
     }catch(error)
     {
-        console.log("Error:", error);
+        res.status(500).json({ message: "Error registering students from Excel file", error });
     }
 
     

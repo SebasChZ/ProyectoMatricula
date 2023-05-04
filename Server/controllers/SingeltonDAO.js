@@ -152,7 +152,7 @@ class SingletonDAO {
             const students = await Student.find.sort({ firstName: 1 });
             res.status(200).json(students);
         } catch (error) {
-            res.status(500).json({ msg: 'Server error' });
+            res.status(500).json({ msg: 'Server error campus' });
         } finally {
             next();
         }
@@ -169,7 +169,7 @@ class SingletonDAO {
             const students = await Student.find({ campus: campus }).sort({ studentId: 1 });
             res.status(200).json(students);
         } catch (error) {
-            res.status(500).json({ msg: 'Server error' });
+            res.status(500).json({ msg: 'Server errorf fdsa' });
         } finally {
             next();
         }
@@ -184,7 +184,7 @@ class SingletonDAO {
             const students = await Student.find({ studentId: new RegExp(`^${idStart}`) }).sort({ studentId: 1 });
             res.status(200).json(students);
         } catch (error) {
-            res.status(500).json({ msg: 'Server error' });
+            res.status(500).json({ msg: 'Server error asdf' });
         } finally {
             next();
         }
@@ -193,8 +193,7 @@ class SingletonDAO {
 
 
     async registerExcel(data,req, res, next) {
-        
-        console.log("Entra a la funcion DAO");
+       
 
         try {
             
@@ -202,7 +201,7 @@ class SingletonDAO {
 
             // arrayStudents.push(data);
 
-            const students = data.map((student) => ({
+            const students = await data.map((student) => ({
                 studentId: student.studentId,
                 lastName1: student.lastName1,
                 lastName2: student.lastName2,
@@ -212,12 +211,10 @@ class SingletonDAO {
                 academicCenter: student.academicCenter,
             }));
 
-            console.log(students);
 
             await Student.insertMany(students);
-
             res.status(200).json({ message: "Students registered successfully" });
-            
+            console.log("Students registered successfully");
         } catch (error) {
             console.error("Error registering students from Excel file:", error);
             res.status(500).json({ message: "Error registering students from Excel file" });
