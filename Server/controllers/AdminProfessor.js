@@ -11,7 +11,6 @@ const modifyProfessor = async (req, res, next) => {
         jsonProfessor.officePhoneNumber == "") {
         return res.status(400).json({ msg: 'Please enter all fields' });
     } 
-    let password = temporaryPassword();
     await SingletonDAO.modifyProfessorData(req, res, next);
     next();
 }
@@ -31,9 +30,19 @@ const registerProfessor = async (req, res, next) => {
     next();
 }
 
+const unsuscribreProfessor = async (req, res, next) => {
+    const jsonProfessor = req.body;
+    if(jsonProfessor.code == "") {
+        return res.status(400).json({ msg: 'Please enter all fields' });
+    } 
+    
+    await SingletonDAO.unsuscribeProfessor(req, res, next);
+    next();
+}
+
 function temporaryPassword() {
     return Math.random().toString(36).slice(-8);
 }
 
 
-module.exports = {getAllProfessor, registerProfessor, getProfessorById, modifyProfessor};
+module.exports = {getAllProfessor, registerProfessor, getProfessorById, modifyProfessor, unsuscribreProfessor};
