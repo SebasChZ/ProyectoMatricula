@@ -42,7 +42,10 @@ export function AddActivityPage(){
                     <label class="block uppercase tracking-wide text-gray-700 text-xs text-right font-bold mb-2" for="grid-fechaInicio">
                         Fecha de Inicio
                     </label>
-                    <input class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-lg" id="grid-first-name" type="text" placeholder=""/>
+                   <div class="flex items-center">
+                            <input type="date" id="start" name="trip-start"
+                            class="bg-gray-200 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-200 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500 text-center"/>
+                        </div>
                     </div>
                 </div>
 
@@ -68,8 +71,11 @@ export function AddActivityPage(){
                             Fecha de Final
                         </label>
 
-<input type="date" id="start" name="trip-start"
-       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                        <div class="flex items-center">
+                            <input type="date" id="start" name="trip-start"
+                            class="bg-gray-200 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-200 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500 text-center"/>
+                        </div>
+
                     </div>
                     
                 </div>
@@ -142,7 +148,7 @@ export function AddActivityPage(){
                         <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-foto">
                                 Imágenes
                             </label>
-                            <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 dark:text-gray-700 focus:outline-none dark:bg-gray-200 dark:border-gray-600 dark:placeholder-gray-400" aria-describedby="user_avatar_help" id="user_avatar" type="file"/>
+                            <input class="block w-full text-sm text-gray-900 border border-gray-700 rounded-lg cursor-pointer bg-gray-700 dark:text-gray-700 focus:outline-none dark:bg-gray-200 dark:border-gray-600 dark:placeholder-gray-700" aria-describedby="user_avatar_help" id="user_avatar" type="file"/>
                     </div>
                 </div> 
 
