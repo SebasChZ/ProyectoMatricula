@@ -5,6 +5,7 @@ import { LoginPage } from "./views/LoginPage";
 import { ForgotPasswordPage } from "./views/ForgotPasswordPage";
 import RequireAuth from "./components/RequireAuth";
 import { RegisterProfessorPage } from "./views/RegisterProfessorPage";
+import { Navigate } from "react-router-dom";
 
 const ROLES = {
   User: 1,
@@ -19,7 +20,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         {/*Public routes */}
-        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         {/*Private routes */}
@@ -57,4 +58,3 @@ export default function App() {
     </Routes>
   );
 }
-
