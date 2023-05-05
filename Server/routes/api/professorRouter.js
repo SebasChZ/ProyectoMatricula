@@ -5,6 +5,7 @@ const adminProfessorControllers = require('../../controllers/AdminProfessor');
 router.route('/')
     .get(adminProfessorControllers.getAllProfessor)
     .post(adminProfessorControllers.registerProfessor)
+    .put(adminProfessorControllers.modifyProfessor)
 
 
 router.route('/cha')

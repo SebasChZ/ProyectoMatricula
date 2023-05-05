@@ -278,6 +278,55 @@ class SingletonDAO {
         }
     };
 
+    // modify professor
+    async modifyProfessorData(req, res, next) {
+        try {
+
+            //check for find the user usernames in the db
+            const jsonProfessor = req.body;
+            const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
+            const professorFoundByEmail = await Professor.findOne({ email: jsonProfessor.email }).exec();
+            const userFound = await User.findOne({ email: jsonProfessor.email }).exec();
+            console.log(professorFound);
+            console.log(professorFoundByEmail);
+            
+            if (!professorFound) {
+                return res.status(400).json({ message: 'This code dont exits ' });
+            } else if (professorFoundByEmail && userFound.email != professorFoundByEmail.email) {
+                return res.status(400).json({ message: 'Already exits a professor with this email' })
+            }else{
+                if (professorFound == professorFoundByEmail) {
+                    console.log("entro");
+                }
+                if (userFound.email != professorFoundByEmail.email){
+                    await User.updateOne({"email": professorFound.email}, {"email": jsonProfessor.email});
+                    console.log("never arrive here");
+                    await Professor.updateOne({"code": jsonProfessor.code},{
+                        "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
+                        "email": jsonProfessor.email, "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber, 
+                        "photo": jsonProfessor.photo
+                    });
+                }else if (userFound.email == professorFoundByEmail.email){
+
+                    await Professor.updateOne({"code": jsonProfessor.code},{
+                        "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
+                        "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber, 
+                        "photo": jsonProfessor.photo
+                    });
+                }
+                
+                          
+                res.status(200).json({ state: true, message: 'The professor has been modified perfectly' });
+                
+            }
+
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
+
+
 
 }
 

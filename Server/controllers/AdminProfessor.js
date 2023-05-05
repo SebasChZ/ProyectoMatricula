@@ -5,17 +5,15 @@ const getAllProfessor = (req, res) => {
     res.send(data.user);
 }
 
-const createNewProfessor = (req, res) => {
-    const newEmployee = {
-
-    }
-
-    if (!newEmployee.name || !newEmployee.email || !newEmployee.password) {
-        return res.status(400).json({ msg: 'Please include a name, email and password' });
-    }
-
-    data.user.push(newEmployee);
-    res.json(data.user);
+const modifyProfessor = async (req, res, next) => {
+    const jsonProfessor = req.body;
+    if(jsonProfessor.firstName == "" || jsonProfessor.Email == "" || jsonProfessor.Password == "" || jsonProfessor.phoneNumber == "" ||
+        jsonProfessor.officePhoneNumber == "") {
+        return res.status(400).json({ msg: 'Please enter all fields' });
+    } 
+    let password = temporaryPassword();
+    await SingletonDAO.modifyProfessorData(req, res, next);
+    next();
 }
 
 const getProfessorById = (req, res) => {
@@ -38,4 +36,4 @@ function temporaryPassword() {
 }
 
 
-module.exports = {getAllProfessor, registerProfessor, getProfessorById};
+module.exports = {getAllProfessor, registerProfessor, getProfessorById, modifyProfessor};
