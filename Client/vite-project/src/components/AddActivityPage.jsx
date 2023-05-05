@@ -21,7 +21,7 @@ export function AddActivityPage(){
                     <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-titulo">
                         Título
                     </label>
-                    <input class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-lg" id="grid-first-name" type="text" placeholder=""/>
+                    <input class="appearance-none block w-full bg-gray-200 rounded-lg text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-lg" id="grid-first-name" type="text" placeholder=""/>
                    
                     </div>
                     <div class="w-full md:w-1/4 px-3">
@@ -29,7 +29,7 @@ export function AddActivityPage(){
                         Modalidad
                     </label>
                     <div class="relative">
-                            <select class="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 shadow-lg" id="grid-modalidad">
+                            <select class="block appearance-none w-full bg-gray-200 rounded-lg border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 shadow-lg" id="grid-modalidad">
                             <option>Presencial</option>
                             <option>Remoto</option>
                             </select>
@@ -59,7 +59,7 @@ export function AddActivityPage(){
                     </div>
 
                     <div class="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                        <label class="block uppercase tracking-wide text-gray-700 text-xs text-right font-bold mb-2" for="grid-enlace">
+                        <label class="block uppercase tracking-wide rounded-lg text-gray-700 text-xs text-right font-bold mb-2" for="grid-enlace">
                             Enlace
                         </label>
                        
@@ -82,7 +82,7 @@ export function AddActivityPage(){
 
                 <div class="flex flex-wrap -mx-20 mb-2">
                     <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="grid-responsable">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs rounded-lg font-bold mb-2" for="grid-responsable">
                             Responsable
                         </label>
                         <div class="relative">
@@ -97,7 +97,7 @@ export function AddActivityPage(){
                         </div>
                     </div>
                     <div class="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                        <label class="block uppercase tracking-wide text-gray-700 text-xs text-right font-bold mb-2" for="grid-asignarEquipo">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs rounded-lg text-right font-bold mb-2" for="grid-asignarEquipo">
                             Semana
                         </label>
                         <div class="relative">
@@ -125,7 +125,7 @@ export function AddActivityPage(){
                     </div>
 
                     <div class="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                        <label class="block uppercase tracking-wide text-gray-700 text-xs text-right font-bold mb-2" for="grid-asignarEquipo">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs rounded-lg text-right font-bold mb-2" for="grid-asignarEquipo">
                             Tipo
                         </label>
                         <div class="relative">
