@@ -22,6 +22,7 @@ export default function App() {
         {/*Public routes */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/unauthorized" element={<h1>Unauthorized</h1>} />
 
         {/*Private routes */}
         {/* User routes */}
