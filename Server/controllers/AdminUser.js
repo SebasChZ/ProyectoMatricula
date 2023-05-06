@@ -2,13 +2,25 @@
 const SingletonDAO = require('./SingeltonDAO.js');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const fsPromises = require('fs').promises;
 
 const loginUser = async (req, res, next) => {
     const { email, password } = req.body;
     if(!email || !password) {
         return res.status(400).json({ msg: 'Please enter all fields' });
     }    
-    await SingletonDAO.loginUser(req, res, next);
+    let valueLoggin  = true;//await SingletonDAO.loginUser(req, res, next);
+    if (valueLoggin == false) {
+        console.log("User login failed");
+    }else{
+        const accessToken = jwt.sign({ "username": email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
+        const refreshToken = jwt.sign({ "username": email }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' });
+
+        const currentUser = {... email, refreshToken}
+        console.log("User login success");
+        res.status(200).json({ accessToken, currentUser });
+    }
     next();
 }
 

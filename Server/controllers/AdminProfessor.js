@@ -1,8 +1,8 @@
 
 const SingletonDAO = require('./SingeltonDAO.js');
 
-const getAllProfessor = (req, res) => {
-    res.send(data.user);
+const getAllProfessor = async (req, res, next) => {
+    await SingletonDAO.getAllProfessor(req, res, next);
 }
 
 const modifyProfessor = async (req, res, next) => {
@@ -15,8 +15,8 @@ const modifyProfessor = async (req, res, next) => {
     next();
 }
 
-const getProfessorById = (req, res) => {
-    res.json({"id": '15'});
+const getProfessorById = async (req, res, next) => {
+    await SingletonDAO.getProfessorById(req, res, next);
 }
 
 const registerProfessor = async (req, res, next) => {

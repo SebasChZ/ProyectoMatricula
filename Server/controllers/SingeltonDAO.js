@@ -88,24 +88,27 @@ class SingletonDAO {
             //check for find the user usernames in the db
             const { email, password } = req.body;
             const userFound = await User.findOne({ email: email }).exec();
-            console.log(userFound);
             if (!userFound) {
-                return res.status(400).json({ message: 'User has no register' });
+                res.status(400).json({status:false, message: 'User has no register' });
+                return false;
             }
             if (userFound) {
 
                 const match = await bcrypt.compare(password, userFound.password);
 
                 if (match) {
-                    res.status(200).json({ message: 'User logged perfectly ' });
+                    res.status(200).json({ status:true, message: 'User logged perfectly ' });
+                    return true;
 
                 } else {
-                    res.status(400).json({ message: 'User not logged' });
+                    res.status(400).json({ status:false, message: 'User not logged' });
+                    return false;
                 }
             }
 
         } catch {
-            res.status(500).json({ message: 'Server error' });
+            res.status(500).json({status:false, message: 'Server error' });
+            return false;
         }
         next();
     }
@@ -343,6 +346,48 @@ class SingletonDAO {
                 });
                                           
                 res.status(200).json({ state: true, message: 'The professor has been unsuscribe' });
+                
+            }
+
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
+
+     // get all professor
+     async getAllProfessor(req, res, next) {
+        try {
+            const professorsFound = await Professor.find({}).exec();
+            if (!professorsFound) {
+                return res.status(400).json({ message: 'This code dont exits ' });
+           
+            }else{
+               
+                                          
+                res.status(200).json({ state: true, professorsFounds: professorsFound });
+                
+            }
+
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
+
+     // modify professor
+     async getProfessorByID(req, res, next) {
+        try {
+
+            //check for find the user usernames in the db
+            const jsonProfessor = req.body;
+            const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
+            if (!professorFound) {
+                return res.status(400).json({ message: 'This code dont exits ' });
+           
+            }else{
+                                                         
+                res.status(200).json({ state: true, "professor":professorFound });
                 
             }
 
