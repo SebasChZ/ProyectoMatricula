@@ -38,7 +38,7 @@ export function Sidebar() {
             <img src={logoTec} alt="Tec Logo" />
           </a>
           <ul className="space-y-2 font-medium">
-            <SidebarContent userType={2} />
+            <SidebarContent />
           </ul>
         </div>
       </aside>

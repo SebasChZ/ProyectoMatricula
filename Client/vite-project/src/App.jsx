@@ -6,13 +6,15 @@ import { ForgotPasswordPage } from "./views/ForgotPasswordPage";
 import RequireAuth from "./components/RequireAuth";
 import { RegisterProfessorPage } from "./views/RegisterProfessorPage";
 import { Navigate } from "react-router-dom";
+import { HomeSwitch } from "./components/HomeSwitch";
+import { ProfessorHomePage } from "./views/ProfessorHomePage";
+import { AssistantHomePage } from "./views/AssistantHomePage";
 
 const ROLES = {
-  User: 1,
-  Professor: 2,
-  Coordinator: 3,
-  Assistant: 4,
-  AssistantCA: 5,
+  Professor: 1597,
+  Coordinator: 2264,
+  Assistant: 3123,
+  AssistantCA: 4478,
 };
 
 export default function App() {
@@ -26,14 +28,29 @@ export default function App() {
 
         {/*Private routes */}
         {/* User routes */}
-        {/* <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
-          <Route path="/user" element={<h1>User</h1>} />
-        </Route> */}
+        <Route
+          element={
+            <RequireAuth
+              allowedRoles={[
+                ROLES.Professor,
+                ROLES.Coordinator,
+                ROLES.Assistant,
+                ROLES.AssistantCA,
+              ]}
+            />
+          }
+        >
+          <Route path="/home-switch" element={<HomeSwitch />} />
+        </Route>
 
         {/* Professor routes */}
-        {/* <Route element={<RequireAuth allowedRoles={[ROLES.Professor]} />}>
-          <Route path="/professor" element={<h1>Professor</h1>} />
-        </Route> */}
+        <Route
+          element={
+            <RequireAuth allowedRoles={[ROLES.Professor, ROLES.Coordinator]} />
+          }
+        >
+          <Route path="/home-professor" element={<ProfessorHomePage />} />
+        </Route>
 
         {/* Coordinator routes */}
         {/* <Route element={<RequireAuth allowedRoles={[ROLES.Coordinator]} />}>
@@ -41,9 +58,13 @@ export default function App() {
         </Route> */}
 
         {/* Assistant routes */}
-        {/* <Route element={<RequireAuth allowedRoles={[ROLES.Assistant, ROLES.AssistantCA]} />}>
-          <Route path="/assistant" element={<h1>Assistant</h1>} />
-        </Route> */}
+        <Route
+          element={
+            <RequireAuth allowedRoles={[ROLES.Assistant, ROLES.AssistantCA]} />
+          }
+        >
+          <Route path="/home-assistant" element={<AssistantHomePage />} />
+        </Route>
 
         {/* AssistantCA routes */}
         <Route element={<RequireAuth allowedRoles={[ROLES.AssistantCA]} />}>
