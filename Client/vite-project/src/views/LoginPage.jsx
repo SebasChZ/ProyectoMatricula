@@ -45,7 +45,7 @@ export function LoginPage() {
     //   setAuth({ email, password, roles, accessToken });
     //   setUser("");
     //   setPwd("");
-    //   setSuccess(true);
+    //   navigate("/home-switch");
     // } catch (err) {
     //   if (!err?.response) {
     //     setErrorMsg("No Server Response");
@@ -58,9 +58,9 @@ export function LoginPage() {
     //   }
     //   errRef.current.focus();
     // }
-    let roles = [5];
+    let roles = [3123, 4478];
     setAuth({ email, password, roles });
-    navigate("/registrar-profesor");
+    navigate("/home-switch");
   };
 
   const styles = {
@@ -137,7 +137,6 @@ export function LoginPage() {
                 type="submit"
                 className="w-full text-white bg-primary-1000 hover:bg-primary-1000 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-00747F dark:hover:bg-primary-1000 dark:focus:ring-primary-800"
               >
-                {" "}
                 Iniciar Sesión
               </button>
 
@@ -146,7 +145,6 @@ export function LoginPage() {
                   to="/forgot-password"
                   className="font-medium text-primary-1100 "
                 >
-                  {" "}
                   ¿Olvidó su contraseña?
                 </Link>
               </p>
