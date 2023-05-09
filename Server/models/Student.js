@@ -29,6 +29,7 @@ const StudentSchema = new mongoose.Schema({
   },
   academicCenter: {
     type : String,
+    required: true,
   },
 },{collection: 'student'});
 

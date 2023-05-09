@@ -1,12 +1,12 @@
 const XLSX = require('xlsx');
 const path = require('path');
 
-function readFile () {
+async function readFile (filename) {
 
     try {
-        const filename = 'PruebasDiseno.xlsx';
-        console.log(path.join(__dirname, filename));
-        const file = XLSX.readFile(path.join(__dirname, filename));
+        
+        console.log(path.join(__dirname, "..", "uploads", "documents",   filename));
+        const file = XLSX.readFile(path.join(__dirname, "..", "uploads", "documents",   filename));
 
         let data = []
         
@@ -18,9 +18,9 @@ function readFile () {
         {
         const temp = XLSX.utils.sheet_to_json(
                 file.Sheets[file.SheetNames[i]])
-        temp.forEach((res) => {
-            data.push(res)
-        })
+            temp.forEach((res) => {
+                data.push(res)
+            })
         }
         return data;
         
