@@ -1,9 +1,11 @@
 const SingletonConnexion = require('./SingeltonConnexion.js');
+
+//Models
 const User = require('../models/User');
-
 const Student = require('../models/Student');
-
 const Professor = require('../models/Professor');
+const Assistant = require('../models/Assistant');
+const WorkTeam = require('../models/WorkTeam');
 
 const bcrypt = require('bcrypt');
 const erorrHandler = require('../middleware/erorrHandler');
@@ -114,7 +116,10 @@ class SingletonDAO {
     //-------------------------------------------------------------------------------------
     async modifyStudent(req, res, next) {
         //check for duplicate usernames in the db
-        const studentToModify = await Student.findOne({ studentId: id }).exec();
+
+        const { id, newName, newLastName1, newLastName2, newEmail, newPhone } = req.body
+
+        const studentToModify = await Student.findOne({ studentId: id });
 
         if (!studentToModify) {
             return res.status(400).json({ msg: 'studentId not found!' });
@@ -149,10 +154,10 @@ class SingletonDAO {
     async getAllAlphabetical(req, res, next) {
 
         try {
-            const students = await Student.find.sort({ firstName: 1 });
+            const students = await Student.find().sort({ firstName: 1 });
             res.status(200).json(students);
         } catch (error) {
-            res.status(500).json({ msg: 'Server error campus' });
+            res.status(500).json({ msg: 'Error getting all students on alphabetical order' });
         } finally {
             next();
         }
@@ -163,13 +168,13 @@ class SingletonDAO {
     async getAllCampus (req, res, next) {
         
         //The request must have the parameter for the filter
-        const campus = req.body;
+        const campusActual = req.params.campus;
 
         try {
-            const students = await Student.find({ campus: campus }).sort({ studentId: 1 });
+            const students = await Student.find({ academicCenter: campusActual }).sort({ studentId: 1 });
             res.status(200).json(students);
         } catch (error) {
-            res.status(500).json({ msg: 'Server errorf fdsa' });
+            res.status(500).json({ msg: 'Error getting all students by campus',error });
         } finally {
             next();
         }
@@ -178,7 +183,7 @@ class SingletonDAO {
     async getAllId(req, res, next) {
 
         //The request must have the parameter for the filter
-        const idStart = req.body;
+        const idStart = req.params.id;
       
         try {
             const students = await Student.find({ studentId: new RegExp(`^${idStart}`) }).sort({ studentId: 1 });
@@ -278,7 +283,110 @@ class SingletonDAO {
         }
     };
 
+    //-------------------------------------------------------------------------------------
+    //                      Assistant Admin Functions
+    //-------------------------------------------------------------------------------------
 
+    async dissableProfessor(req, res, next) {
+        
+        profCode = req.params.code;
+
+        try{
+            const dissable = await Professor.updateOne({ code: profCode }, { $set: { state: false } });
+            res.status(200).json({ message: "Professor Status Updated" });
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        } finally {
+            next();
+        }
+    };
+
+    async enableProfessor(req, res, next) {
+        
+        profCode = req.params.code;
+
+        try{
+            const enableProfessor = await Professor.updateOne({ code: profCode }, { $set: { state: true } });
+            res.status(200).json({ message: "Professor Status Updated" });
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        } finally {
+            next();
+        }
+    };
+
+    async modifyProfessor(req, res, next) {
+
+        try{
+            const { code, firstName, lastName1, lastName2, email, officePhoneNumber, phoneNumber, photo, branch } = req.body;
+
+            const professorToModify = await Professor.findOne({ code: code });
+
+            if (professorToModify) {
+                const professorModified = await Professor.updateOne({ code: code }, { $set: { firstName: firstName, lastName1: lastName1, lastName2: lastName2, email: email, officePhoneNumber: officePhoneNumber, phoneNumber: phoneNumber, photo: photo, branch: branch } });
+                if (professorModified) {
+                    res.status(200).json({ message: "Professor modified successfully" });
+                } else {
+                    res.status(400).json({ message: "Professor not modified" });
+                }
+            }
+
+        }catch (error){
+            res.status(500).json({ message: `Server error: ${error}` });
+        } finally {
+            next();
+        }
+
+    };
+
+    // WorkTeam Assistant Functions
+
+    async setCoordinator(req, res, next) {
+        
+        try{
+            const { code, workTeam } = req.body;
+
+            const professorToAdd = await Professor.findOne({ code: code });
+
+            if (professorToAdd) {
+                const professorModified = await WorkTeam.updateOne({ workTeamId: workTeam }, { $set: { professorCode: code } });
+                if (professorModified) {
+                    res.status(200).json({ message: "Professor modified successfully" });
+                } else {
+                    res.status(400).json({ message: "Professor not found" });
+                }
+            } else {
+                res.status(400).json({ message: "Professor not found" });
+            }
+        }catch (error){
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+        next();
+    };
+
+    async addProfessorToWorkTeam(req, res, next) {
+
+        try{
+            const { code, workTeam } = req.body;
+
+            const professorToAdd = await Professor.findOne({ code: code });
+
+            if (professorToAdd) {
+                const addedProfessor = await WorkTeam.updateOne({ workTeamId: workTeam }, { $push: { professorsArray: professorToAdd } });
+                if (addedProfessor) {
+                    res.status(200).json({ message: "Professor added successfully" });
+                } else {    
+                    res.status(400).json({ message: "Professor not added" });
+                }
+            } else {
+                res.status(400).json({ message: "Professor not found" });
+            }
+        }catch (error){
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+        next();
+    };
+    
 }
 
 const singletonDAO = SingletonDAO.getInstance();
