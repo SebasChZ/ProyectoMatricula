@@ -6,9 +6,11 @@ import { ForgotPasswordPage } from "./views/ForgotPasswordPage";
 import RequireAuth from "./components/RequireAuth";
 import { RegisterProfessorPage } from "./views/RegisterProfessorPage";
 import { Navigate } from "react-router-dom";
+import { CreatePlan } from "./views/CreatePlan";
 import { HomeSwitch } from "./components/HomeSwitch";
 import { ProfessorHomePage } from "./views/ProfessorHomePage";
 import { AssistantHomePage } from "./views/AssistantHomePage";
+
 
 const ROLES = {
   Professor: 1597,
@@ -70,7 +72,7 @@ export default function App() {
         <Route element={<RequireAuth allowedRoles={[ROLES.AssistantCA]} />}>
           <Route
             path="/registrar-profesor"
-            element={<RegisterProfessorPage />}
+            element={<CreatePlan/>}
           />
         </Route>
 
