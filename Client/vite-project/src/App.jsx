@@ -1,32 +1,84 @@
-import { Sidebar } from "./components/Sidebar";
 import "./index.css";
+import { Layout } from "./components/Layout";
 import { Route, Routes } from "react-router-dom";
 import { LoginPage } from "./views/LoginPage";
 import { ForgotPasswordPage } from "./views/ForgotPasswordPage";
-import { createContext } from "react";
-import { useState } from "react";
+import RequireAuth from "./components/RequireAuth";
+import { RegisterProfessorPage } from "./views/RegisterProfessorPage";
+import { Navigate } from "react-router-dom";
+import { CreatePlan } from "./views/CreatePlan";
+import { HomeSwitch } from "./components/HomeSwitch";
+import { ProfessorHomePage } from "./views/ProfessorHomePage";
+import { AssistantHomePage } from "./views/AssistantHomePage";
+
+
+const ROLES = {
+  Professor: 1597,
+  Coordinator: 2264,
+  Assistant: 3123,
+  AssistantCA: 4478,
+};
 
 export default function App() {
-  const [visibility, setVisibility] = useState("invisible");
-
-  function changeVisibility(visibility) {
-    setVisibility(visibility);
-  }
-
   return (
-    <>
-      <div>
-        <LoginPage changeVisibility={changeVisibility} />
-        <Sidebar visibility={visibility} />
-        <div className="sm:ml-[256px]">
-          <Routes>
-            <Route path="/inicio" element={<h1>Inicio</h1>} />
-            <Route path="/planes" element={<h1>Planes</h1>} />
-            <Route path="/estudiantes" element={<h1>Estudiantes</h1>} />
-            <Route path="/forgotPassword" element={<ForgotPasswordPage />} />
-          </Routes>
-        </div>
-      </div>
-    </>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        {/*Public routes */}
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/unauthorized" element={<h1>Unauthorized</h1>} />
+
+        {/*Private routes */}
+        {/* User routes */}
+        <Route
+          element={
+            <RequireAuth
+              allowedRoles={[
+                ROLES.Professor,
+                ROLES.Coordinator,
+                ROLES.Assistant,
+                ROLES.AssistantCA,
+              ]}
+            />
+          }
+        >
+          <Route path="/home-switch" element={<HomeSwitch />} />
+        </Route>
+
+        {/* Professor routes */}
+        <Route
+          element={
+            <RequireAuth allowedRoles={[ROLES.Professor, ROLES.Coordinator]} />
+          }
+        >
+          <Route path="/home-professor" element={<ProfessorHomePage />} />
+        </Route>
+
+        {/* Coordinator routes */}
+        {/* <Route element={<RequireAuth allowedRoles={[ROLES.Coordinator]} />}>
+          <Route path="/coordinator" element={<h1>Coordinator</h1>} />
+        </Route> */}
+
+        {/* Assistant routes */}
+        <Route
+          element={
+            <RequireAuth allowedRoles={[ROLES.Assistant, ROLES.AssistantCA]} />
+          }
+        >
+          <Route path="/home-assistant" element={<AssistantHomePage />} />
+        </Route>
+
+        {/* AssistantCA routes */}
+        <Route element={<RequireAuth allowedRoles={[ROLES.AssistantCA]} />}>
+          <Route
+            path="/registrar-profesor"
+            element={<CreatePlan/>}
+          />
+        </Route>
+
+        {/*Catch all*/}
+        <Route path="*" element={<h1>404 error</h1>} />
+      </Route>
+    </Routes>
   );
 }

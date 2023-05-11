@@ -2,80 +2,69 @@ import { Link } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import GroupIcon from "@mui/icons-material/Group";
+import { useAuth } from "../hooks/useAuth";
+import { useLocation, Navigate } from "react-router-dom";
 
-export function SidebarContent({ userType }) {
+function Item({ children }) {
+  return (
+    <li className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+      {children}
+    </li>
+  );
+}
+
+export function SidebarContent() {
+  const { auth } = useAuth();
+  const location = useLocation();
+
   let options;
-
-  switch (userType) {
-    case 1: // Professor
-      options = (
-        <>
-          <li>
-            <Link
-              to="/Inicio"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <HomeIcon />
-              <span className="ml-3">Inicio</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/planes"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <EventNoteIcon />
-              <span className="ml-3">Planes de trabajo</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/estudiantes"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <GroupIcon />
-              <span className="ml-3">Estudiantes</span>
-            </Link>
-          </li>
-        </>
-      );
-      break;
-    case 2: // Assistant
-      options = (
-        <>
-          <li>
-            <Link
-              to="/"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <HomeIcon />
-              <span className="ml-3">Inicio</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <EventNoteIcon />
-              <span className="ml-3">Planes de trabajo</span>
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/"
-              className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              <GroupIcon />
-              <span className="ml-3">Profesores</span>
-            </Link>
-          </li>
-        </>
-      );
-      break;
-    default:
-      options = <li>No options available</li>;
-  }
+  options = auth?.roles?.find((role) => [1597, 2264].includes(role)) ? (
+    <>
+      <Item>
+        <Link to="/home-switch" className="flex items-center space-x-2">
+          <HomeIcon />
+          <span>Inicio</span>
+        </Link>
+      </Item>
+      <Item>
+        <Link to="/plans" className="flex items-center space-x-2">
+          <EventNoteIcon />
+          <span>Planes de trabajo</span>
+        </Link>
+      </Item>
+      <Item>
+        <Link to="/estudiantes" className="flex items-center space-x-2">
+          <GroupIcon />
+          <span>Estudiantes</span>
+        </Link>
+      </Item>
+    </>
+  ) : auth?.roles?.find((role) => [3123, 4478].includes(role)) ? (
+    <>
+      <Item>
+        <Link to="/home-switch" className="flex items-center space-x-2">
+          <HomeIcon />
+          <span>Inicio</span>
+        </Link>
+      </Item>
+      <Item>
+        <Link to="/plans" className="flex items-center space-x-2">
+          <EventNoteIcon />
+          <span>Planes de trabajo</span>
+        </Link>
+      </Item>
+      <Item>
+        <Link to="/profesores" className="flex items-center space-x-2">
+          <GroupIcon />
+          <span>Profesores</span>
+        </Link>
+      </Item>
+    </>
+  ) : auth?.email ? (
+    <Navigate to="/unauthorized" state={{ from: location }} replace />
+  ) : (
+    <Navigate to="/" state={{ from: location }} replace />
+  );
 
   return <>{options}</>;
 }

@@ -1,43 +1,66 @@
-import { useState } from "react";
-import Axios from "axios";
+import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
+import axios from "../api/axios";
 import logoImage from "../img/logoTec.png"; // importar el logo del tec
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
-export function LoginPage({ changeVisibility }) {
+const LOGIN_URL = "/login";
+
+export function LoginPage() {
+  const { setAuth } = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+
+  const userRef = useRef();
+  const errorRef = useRef();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const loginUser = () => {
-    let visibility = "invisible";
-    if (!email || !password) {
-      alert("Please fill all the fields");
-      return;
-    }
-    Axios.post("http://localhost:3500/login", {
-      email,
-      password,
-    })
-      .then((response) => {
-        if (response.data.message) {
-          console.log(response);
-          alert(response.data.message);
-          visibility = "visible";
-        } else {
-          alert("Login unsuccessful");
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          // server responded with a status code outside of 2xx
-          console.log(error.response.data);
-          alert(error.response.data.message);
-        } else {
-          // network error or something else went wrong
-          console.log(error.message);
-          alert(error.response.data.message);
-        }
-      });
-    changeVisibility(visibility);
+  useEffect(() => {
+    userRef?.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    setErrorMsg("");
+  }, [email, password]);
+
+  const loginUser = async () => {
+    // try {
+    //   const response = await axios.post(
+    //     LOGIN_URL,
+    //     JSON.stringify({ email, password }),
+    //     {
+    //       headers: { "Content-Type": "application/json" },
+    //       withCredentials: true,
+    //     }
+    //   );
+    //   console.log(JSON.stringify(response?.data));
+    //   //console.log(JSON.stringify(response));
+    //   const accessToken = response?.data?.accessToken;
+    //   const roles = response?.data?.roles;
+    //   setAuth({ email, password, roles, accessToken });
+    //   setUser("");
+    //   setPwd("");
+    //   navigate("/home-switch");
+    // } catch (err) {
+    //   if (!err?.response) {
+    //     setErrorMsg("No Server Response");
+    //   } else if (err.response?.status === 400) {
+    //     setErrorMsg("Missing Username or Password");
+    //   } else if (err.response?.status === 401) {
+    //     setErrorMsg("Unauthorized");
+    //   } else {
+    //     setErrorMsg("Login Failed");
+    //   }
+    //   errRef.current.focus();
+    // }
+    let roles = [3123, 4478];
+    setAuth({ email, password, roles });
+    navigate("/home-switch");
   };
 
   const styles = {
@@ -49,6 +72,13 @@ export function LoginPage({ changeVisibility }) {
   console.log(logoImage);
   return (
     <section style={styles}>
+      <p
+        ref={errorRef}
+        className={errorMsg ? "errmsg" : "offscreen"}
+        aria-live="assertive"
+      >
+        {errorMsg}
+      </p>
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <div className="w-full bg-white opacity-80 rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-white-800 dark:border-gray-700">
           <div className="p-8 space-y-6 md:space-y-6 sm:p-8">
@@ -58,16 +88,10 @@ export function LoginPage({ changeVisibility }) {
 
             <form className="space-y-4 md:space-y-6" action="#">
               <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-6 text-[30px] font-medium  text-center text-gray-900 dark:text-black"
-                >
+                <label className="block mb-6 text-[30px] font-medium  text-center text-gray-900 dark:text-black">
                   Iniciar sesión
                 </label>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-center text-gray-900 dark:text-black"
-                >
+                <label className="block mb-2 text-sm font-medium text-center text-gray-900 dark:text-black">
                   Escriba sus credenciales para iniciar!
                 </label>
                 <input
@@ -77,6 +101,7 @@ export function LoginPage({ changeVisibility }) {
                   type="email"
                   name="email"
                   id="email"
+                  ref={userRef}
                   style={{
                     backgroundColor: "#F0F0F0",
                     borderColor: "black",
@@ -84,7 +109,8 @@ export function LoginPage({ changeVisibility }) {
                   }}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-black dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-black"
                   placeholder="email"
-                  required=""
+                  required
+                  value={email}
                 />
               </div>
               <div>
@@ -95,10 +121,14 @@ export function LoginPage({ changeVisibility }) {
                   type="password"
                   name="password"
                   id="password"
-                  style={{ backgroundColor: "#F0F0F0", borderColor: "black" }}
+                  style={{
+                    backgroundColor: "#F0F0F0",
+                    borderColor: "black",
+                  }}
                   placeholder="contraseña"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-black dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required=""
+                  required
+                  value={password}
                 />
               </div>
 
@@ -107,16 +137,14 @@ export function LoginPage({ changeVisibility }) {
                 type="submit"
                 className="w-full text-white bg-primary-1000 hover:bg-primary-1000 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-00747F dark:hover:bg-primary-1000 dark:focus:ring-primary-800"
               >
-                {" "}
                 Iniciar Sesión
               </button>
 
               <p className="text-sm font-light text-002857 ">
                 <Link
-                  to="/forgotPassword"
+                  to="/forgot-password"
                   className="font-medium text-primary-1100 "
                 >
-                  {" "}
                   ¿Olvidó su contraseña?
                 </Link>
               </p>
