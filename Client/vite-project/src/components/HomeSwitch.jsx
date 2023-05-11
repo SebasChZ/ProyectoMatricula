@@ -1,5 +1,3 @@
-import { AssistantHomePage } from "../views/AssistantHomePage";
-import { ProfessorHomePage } from "../views/ProfessorHomePage";
 import { useAuth } from "../hooks/useAuth";
 import { useLocation, Navigate } from "react-router-dom";
 

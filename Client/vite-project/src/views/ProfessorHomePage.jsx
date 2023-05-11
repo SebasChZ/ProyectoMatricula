@@ -1,3 +1,16 @@
+import { PlanTrabajoCard } from "../components/PlanTrabajoCard";
+
 export function ProfessorHomePage() {
-  return <h1>Professor Home Page</h1>;
+  return (
+    <div class="flex gap-10 overflow-auto overflow-card">
+      <PlanTrabajoCard />
+      <PlanTrabajoCard />
+      <PlanTrabajoCard />
+      <PlanTrabajoCard />
+      <PlanTrabajoCard />
+      <PlanTrabajoCard />
+      <PlanTrabajoCard />
+      <PlanTrabajoCard />
+    </div>
+  );
 }

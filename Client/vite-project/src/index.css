@@ -30,3 +30,11 @@
     position: absolute;
     left: -9999px;
 }
+
+::-webkit-scrollbar {
+    width: 10rem;
+}
+
+::-webkit-scrollbar-track {
+    background: hsl(120, 75%, 50% / 1);
+}
