@@ -10,7 +10,7 @@ import { CreatePlan } from "./views/CreatePlan";
 import { HomeSwitch } from "./components/HomeSwitch";
 import { ProfessorHomePage } from "./views/ProfessorHomePage";
 import { AssistantHomePage } from "./views/AssistantHomePage";
-
+import { PlansViewPage } from "./views/PlansViewPage";
 
 const ROLES = {
   Professor: 1597,
@@ -52,6 +52,7 @@ export default function App() {
           }
         >
           <Route path="/home-professor" element={<ProfessorHomePage />} />
+          <Route path="/plans" element={<PlansViewPage />} />
         </Route>
 
         {/* Coordinator routes */}
@@ -70,10 +71,7 @@ export default function App() {
 
         {/* AssistantCA routes */}
         <Route element={<RequireAuth allowedRoles={[ROLES.AssistantCA]} />}>
-          <Route
-            path="/registrar-profesor"
-            element={<CreatePlan/>}
-          />
+          <Route path="/registrar-profesor" element={<CreatePlan />} />
         </Route>
 
         {/*Catch all*/}

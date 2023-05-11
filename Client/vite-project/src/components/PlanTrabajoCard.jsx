@@ -6,7 +6,7 @@ export const PlanTrabajoCard = () => {
   //     useContext(ShopContext);
 
   return (
-    <div className="min-w-[420px] max-h-72 h-full p-6 bg-white border border-gray-200 rounded-lg shadow">
+    <div className="min-w-[420px] max-w-[480px] max-h-72 h-full p-6 bg-white border border-gray-200 rounded-lg shadow">
       <div className="flex justify-between">
         <div className="flex place-content-center h-20 w-20 rounded-full bg-indigo-100">
           <div className="flex flex-col place-content-center">
@@ -20,7 +20,7 @@ export const PlanTrabajoCard = () => {
         </div>
         <a href="#">
           <h5 className="mb-2 text-2xl font-normal tracking-tight text-end">
-            Plan Cartago I 2023{" "}
+            Plan Cartago I 2023
           </h5>
         </a>
       </div>

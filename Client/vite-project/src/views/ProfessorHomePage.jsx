@@ -1,4 +1,5 @@
 import { PlanTrabajoCard } from "../components/PlanTrabajoCard";
+import { ActivityCard } from "../components/ActivityCard";
 
 export function ProfessorHomePage() {
   return (
@@ -12,8 +13,6 @@ export function ProfessorHomePage() {
           <PlanTrabajoCard />
           <PlanTrabajoCard />
           <PlanTrabajoCard />
-          <PlanTrabajoCard />
-          <PlanTrabajoCard />
         </div>
       </section>
       <section className="mt-10">
@@ -21,14 +20,11 @@ export function ProfessorHomePage() {
           Próximas actividades
         </h1>
         <div className="flex gap-10 overflow-auto scrollable py-6">
-          <PlanTrabajoCard />
-          <PlanTrabajoCard />
-          <PlanTrabajoCard />
-          <PlanTrabajoCard />
-          <PlanTrabajoCard />
-          <PlanTrabajoCard />
-          <PlanTrabajoCard />
-          <PlanTrabajoCard />
+          <ActivityCard />
+          <ActivityCard />
+          <ActivityCard />
+          <ActivityCard />
+          <ActivityCard />
         </div>
       </section>
     </div>
