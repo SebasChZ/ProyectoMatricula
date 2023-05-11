@@ -90,26 +90,28 @@ class SingletonDAO {
             //check for find the user usernames in the db
             const { email, password } = req.body;
             const userFound = await User.findOne({ email: email }).exec();
-            console.log(userFound);
             if (!userFound) {
-                return res.status(400).json({ message: 'User has no register' });
+                res.status(400).json({status:false, message: 'User has no register' });
+                return false;
             }
             if (userFound) {
 
                 const match = await bcrypt.compare(password, userFound.password);
 
                 if (match) {
-                    res.status(200).json({ message: 'User logged perfectly ' });
+                    res.status(200).json({ status:true, message: 'User logged perfectly ' });
+                    return true;
 
                 } else {
-                    res.status(400).json({ message: 'User not logged' });
+                    res.status(400).json({ status:false, message: 'User not logged' });
+                    return false;
                 }
             }
 
         } catch {
-            res.status(500).json({ message: 'Server error' });
+            res.status(500).json({status:false, message: 'Server error' });
+            return false;
         }
-        next();
     }
     //-------------------------------------------------------------------------------------
     //                      Student Admin Functions
@@ -282,6 +284,125 @@ class SingletonDAO {
             throw e;
         }
     };
+
+
+    // modify professor
+    async modifyProfessorData(req, res, next) {
+        try {
+
+            //check for find the user usernames in the db
+            const jsonProfessor = req.body;
+            const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
+            const professorFoundByEmail = await Professor.findOne({ email: jsonProfessor.email }).exec();
+            const userFound = await User.findOne({ email: jsonProfessor.email }).exec();
+
+            if (!professorFound) {
+                return res.status(400).json({ message: 'This code dont exits ' });
+            } else if (professorFoundByEmail && userFound.email != professorFoundByEmail.email) {
+                return res.status(400).json({ message: 'This email is invalid for user' })
+            }else{
+                
+                if (professorFound.code == professorFoundByEmail.code && professorFound.email == professorFoundByEmail.email) { //validaton for the email
+
+                    if (userFound.email != professorFoundByEmail.email){
+                        await User.updateOne({"email": professorFound.email}, {"email": jsonProfessor.email});
+                        console.log("never arrive here");
+                        await Professor.updateOne({"code": jsonProfessor.code},{
+                            "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
+                            "email": jsonProfessor.email, "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber, 
+                            "photo": jsonProfessor.photo
+                        });
+                    }else if (userFound.email == professorFoundByEmail.email){
+    
+                        await Professor.updateOne({"code": jsonProfessor.code},{
+                            "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
+                            "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber, 
+                            "photo": jsonProfessor.photo
+                        });
+                    }                  
+                              
+                    res.status(200).json({ state: true, message: 'The professor has been modified perfectly' });
+                }else{
+                    res.status(400).json({ state: false, message: 'Already exits a professor with this email' });
+                }
+                
+                
+            }
+
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
+
+     // modify professor
+     async unsuscribeProfessor(req, res, next) {
+        try {
+
+            //check for find the user usernames in the db
+            const jsonProfessor = req.body;
+            const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
+            if (!professorFound) {
+                return res.status(400).json({ message: 'This code dont exits ' });
+           
+            }else{
+                await Professor.updateOne({"code": jsonProfessor.code},{
+                    "status": 0,
+                });
+                                          
+                res.status(200).json({ state: true, message: 'The professor has been unsuscribe' });
+                
+            }
+
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
+
+     // get all professor
+     async getAllProfessor(req, res, next) {
+        try {
+            const professorsFound = await Professor.find({}).exec();
+            if (!professorsFound) {
+                return res.status(400).json({ message: 'This code dont exits ' });
+           
+            }else{
+               
+                                          
+                res.status(200).json({ state: true, professorsFounds: professorsFound });
+                
+            }
+
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
+
+     // modify professor
+     async getProfessorByID(req, res, next) {
+        try {
+
+            //check for find the user usernames in the db
+            const jsonProfessor = req.body;
+            const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
+            if (!professorFound) {
+                return res.status(400).json({ message: 'This code dont exits ' });
+           
+            }else{
+                                                         
+                res.status(200).json({ state: true, "professor":professorFound });
+                
+            }
+
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
+
+
 
     //-------------------------------------------------------------------------------------
     //                      Assistant Admin Functions

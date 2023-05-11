@@ -1,12 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const app = express()
-const path = require('path');
 const erorrHandler = require('./middleware/erorrHandler');
-const cors = require('cors');
 const corsOptions = require('./config/corsOptions');
-const singletonConnexion = require('./controllers/SingeltonConnexion');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const verifyJWT = require('./middleware/verifyJWT');
 const PORT = process.env.PORT || 3500;
+
 
 
 
@@ -21,10 +22,15 @@ app.use(express.urlencoded({ extended: false }));
 // built-in middleware for json 
 app.use(express.json());
 
+//built-in middleware to parse cookies
+app.use(cookieParser());
+
 //serve static classSingleton
 
 //routers
+
 app.use('/login', require('./routes/api/userRouter'));
+app.use(verifyJWT)
 app.use('/professor', require('./routes/api/professorRouter'));
 app.use('/student', require('./routes/api/studentRouter'));
 
