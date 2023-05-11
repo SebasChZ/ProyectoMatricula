@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const adminProfessorControllers = require('../../controllers/AdminProfessor');
-const verifyJWT = require('../../middleware/verifyJWT');
+
 router.route('/')
-    .get(adminProfessorControllers.getAllProfessor)
+    .get( adminProfessorControllers.getAllProfessor)
     .post(adminProfessorControllers.registerProfessor)
     .put(adminProfessorControllers.modifyProfessor)
     .delete(adminProfessorControllers.unsuscribreProfessor)

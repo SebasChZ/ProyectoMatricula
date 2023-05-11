@@ -5,6 +5,7 @@ const erorrHandler = require('./middleware/erorrHandler');
 const corsOptions = require('./config/corsOptions');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const verifyJWT = require('./middleware/verifyJWT');
 const PORT = process.env.PORT || 3500;
 
 
@@ -27,7 +28,9 @@ app.use(cookieParser());
 //serve static classSingleton
 
 //routers
+
 app.use('/login', require('./routes/api/userRouter'));
+app.use(verifyJWT)
 app.use('/professor', require('./routes/api/professorRouter'));
 app.use('/student', require('./routes/api/studentRouter'));
 

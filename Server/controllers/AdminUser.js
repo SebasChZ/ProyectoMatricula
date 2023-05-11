@@ -10,7 +10,7 @@ const loginUser = async (req, res, next) => {
     if(!email || !password) {
         return res.status(400).json({ msg: 'Please enter all fields' });
     }    
-    let valueLoggin  = true;//await SingletonDAO.loginUser(req, res, next);
+    let valueLoggin = await SingletonDAO.loginUser(req, res, next);
     if (valueLoggin == false) {
         console.log("User login failed");
     }else{
@@ -21,7 +21,7 @@ const loginUser = async (req, res, next) => {
         console.log("User login success");
         res.status(200).json({ accessToken, currentUser });
     }
-    next();
+    next(); 
 }
 
 const registerUser = async (req, res, next) => {

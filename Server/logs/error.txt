@@ -18,3 +18,4 @@
 20230504	20:11:19	1bfb63c0-1a64-4705-beae-42f215a19948	Unexpected string in JSON at position 28: Unexpected string in JSON at position 28
 20230504	20:11:45	f9fee2ff-a353-4283-a3b9-82e0a2b99555	Unexpected string in JSON at position 28: Unexpected string in JSON at position 28
 20230504	20:12:06	dc2f9bae-be76-49a7-acbe-995c24dfe7c9	Unexpected string in JSON at position 28: Unexpected string in JSON at position 28
+20230505	20:41:05	63b01021-cf3d-439b-9a0a-f4c982eec150	Cannot set headers after they are sent to the client: Cannot set headers after they are sent to the client

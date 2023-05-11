@@ -110,7 +110,6 @@ class SingletonDAO {
             res.status(500).json({status:false, message: 'Server error' });
             return false;
         }
-        next();
     }
     //-------------------------------------------------------------------------------------
     //                      Student Admin Functions
