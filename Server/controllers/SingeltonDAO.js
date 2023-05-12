@@ -61,13 +61,13 @@ class SingletonDAO {
         next();
     }
 
-    async registerUserFrom(email, password) {
+    async registerUserFrom(jsonBody) {
         
-        if (!email || !password) {
+        if (!jsonBody.email || !jsonBody.password) {
             return res.status(400).json({ msg: 'Please enter all fields' });
         }
         //check for duplicate usernames in the db
-        const duplicate = await User.findOne({ email: email }).exec();
+        const duplicate = await User.findOne({ email: jsonBody.email }).exec();
 
         if (duplicate) {
             return false;
@@ -75,15 +75,15 @@ class SingletonDAO {
 
         try {
             //encrypt password
-            const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = await bcrypt.hash(jsonBody.password, 10);
 
             //create and store the new user
-            const newUserResult = await User.create({ "email": email, "password": hashedPassword });
+            const newUserResult = await User.create({ "name": jsonBody.firstName, "lastName": jsonBody.lastName1 ,"photo": jsonBody.photo, 
+            "email": email, "password": hashedPassword });
             return true;
         } catch {
             return false;
         }
-        next();
     }
 
 
@@ -102,7 +102,8 @@ class SingletonDAO {
                 const match = await bcrypt.compare(password, userFound.password);
 
                 if (match) {
-                    res.status(200).json({ status:true, message: 'User logged perfectly ' });
+                    
+                    res.status(200).json({ status:true, roles: [userFound.roles], message: 'User logged perfectly ' });
                     return true;
 
                 } else {
@@ -260,7 +261,7 @@ class SingletonDAO {
                     "photo": jsonProfessor.photo, "branch": jsonProfessor.branch, "count": jsonProfessor.count
                 });
                 
-                let UserValue = await SingletonDAO.getInstance().registerUserFrom(jsonProfessor.email, password);
+                let UserValue = await SingletonDAO.getInstance().registerUserFrom(jsonBody);
                 if (UserValue){                    
                     res.status(200).json({ state: true, message: 'The professor has been created perfectly' });
                 }else{

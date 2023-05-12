@@ -31,6 +31,7 @@ const StudentSchema = new mongoose.Schema({
     type : String,
     required: true,
   },
+  _id: false
 },{collection: 'student'});
 
 const Student = mongoose.model("Student", StudentSchema);
