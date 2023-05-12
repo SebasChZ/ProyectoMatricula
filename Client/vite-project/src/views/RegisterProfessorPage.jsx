@@ -1,16 +1,18 @@
 import { useState, useRef, useEffect } from "react";
+import axios from "../api/axios";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 
 const LOGIN_URL = "/professor";
 
 export function RegisterProfessorPage() {
-  const [nombre, setNombre] = useState("");
-  const [apellido1, setApellido1] = useState("");
-  const [apellido2, setApellido2] = useState("");
-  const [oficina, setOficina] = useState("");
-  const [telefono, setTelefono] = useState("");
-  const [sede, setSede] = useState("");
+  const [firstName, setfirstName] = useState("");
+  const [lastName1, setlastName1] = useState("");
+  const [lastName2, setlastName2] = useState("");
+  const [officePhoneNumber, setofficePhoneNumber] = useState("");
+  const [phoneNumber, setphoneNumber] = useState("");
+  const [branch, setbranch] = useState("");
   const [email, setEmail] = useState("");
-  const [profilepic, setProfilepic] = useState("");
+  const [photo, setphoto] = useState("");
 
   const errorRef = useRef();
 
@@ -18,7 +20,14 @@ export function RegisterProfessorPage() {
 
   useEffect(() => {
     setErrorMsg("");
-  }, [nombre, apellido1, apellido2, oficina, telefono, sede, profilepic]);
+  }, [firstName,
+    lastName1,
+    lastName2,
+    officePhoneNumber,
+    phoneNumber,
+    branch,
+    email,
+    photo]);
 
   const registerProfessor = async (e) => {
     e.preventDefault();
@@ -26,14 +35,15 @@ export function RegisterProfessorPage() {
       const response = await axios.post(
         LOGIN_URL,
         JSON.stringify({
-          nombre,
-          apellido1,
-          apellido2,
-          oficina,
-          telefono,
-          sede,
+
+          firstName,
+          lastName1,
+          lastName2,
+          officePhoneNumber,
+          phoneNumber,
+          branch,
           email,
-          profilepic,
+          photo,
         }),
         {
           headers: { "Content-Type": "application/json" },
@@ -43,26 +53,27 @@ export function RegisterProfessorPage() {
       //console.log(JSON.stringify(response));
       // const accessToken = response?.data?.accessToken;
       const roles = response?.data?.status;
-      alert("Successfully registered");
-      setNombre("");
-      setApellido1("");
-      setApellido2("");
-      setOficina("");
-      setTelefono("");
-      setSede("");
+      alert("Successfully registered" + response?.data?.password);
+      setfirstName("");
+      setlastName1("");
+      setlastName2("");
+      setofficePhoneNumber("");
+      setphoneNumber("");
+      setbranch("");
       setEmail("");
-      setProfilepic("");
+      setphoto("");
       navigate("/home-switch");
     } catch (err) {
       if (!err?.response) {
-        console.log(err);
-        setErrorMsg("No Server Response");
+        
+        setErrorMsg("No Server Response" + err);
       } else if (err.response?.status === 400) {
-        setErrorMsg("Missing Username or Password");
+        setErrorMsg("Missing Username or Password" +err.response?.data);
       } else if (err.response?.status === 401) {
         setErrorMsg("Unauthorized");
       } else {
-        setErrorMsg("Login Failed");
+        console.log(err.response?.data);
+        setErrorMsg("Login Failed" + err);
       }
       errRef.current.focus();
     }
@@ -91,55 +102,55 @@ export function RegisterProfessorPage() {
               <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-nombre"
+                  htmlFor="grid-firstName"
                 >
-                  Nombre
+                  firstName
                 </label>
                 <input
                   onChange={(e) => {
-                    setNombre(e.target.value);
+                    setfirstName(e.target.value);
                   }}
                   className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   id="grid-first-name"
                   type="text"
                   placeholder=""
-                  value={nombre}
+                  value={firstName}
                 />
               </div>
               <div className="w-full md:w-1/4 px-3">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-apellido1"
+                  htmlFor="grid-lastName1"
                 >
                   Apellido 1
                 </label>
                 <input
                   onChange={(e) => {
-                    setApellido1(e.target.value);
+                    setlastName1(e.target.value);
                   }}
                   className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   id="grid-last-name"
                   type="text"
                   placeholder=""
-                  value={apellido1}
+                  value={lastName1}
                 />
               </div>
               <div className="w-full md:w-1/4 px-3">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-apellido2"
+                  htmlFor="grid-lastName2"
                 >
                   Apeliido 2
                 </label>
                 <input
                   onChange={(e) => {
-                    setApellido2(e.target.value);
+                    setlastName2(e.target.value);
                   }}
                   className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   id="grid-last-name"
                   type="text"
                   placeholder=""
-                  value={apellido2}
+                  value={lastName2}
                 />
               </div>
             </div>
@@ -148,19 +159,19 @@ export function RegisterProfessorPage() {
               <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-oficina"
+                  htmlFor="grid-officePhoneNumber"
                 >
-                  Número de Oficina
+                  Número de officePhoneNumber
                 </label>
                 <input
                   onChange={(e) => {
-                    setOficina(e.target.value);
+                    setofficePhoneNumber(e.target.value);
                   }}
                   className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   id="grid-first-name"
                   type="text"
                   placeholder=""
-                  value={oficina}
+                  value={officePhoneNumber}
                 />
               </div>
               <div className="w-full md:w-1/3 px-3">
@@ -172,31 +183,31 @@ export function RegisterProfessorPage() {
                 </label>
                 <input
                   onChange={(e) => {
-                    setTelefono(e.target.value);
+                    setphoneNumber(e.target.value);
                   }}
                   className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   id="grid-last-name"
                   type="text"
                   placeholder=""
-                  value={telefono}
+                  value={phoneNumber}
                 />
               </div>
               <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                 <label
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                  htmlFor="grid-sede"
+                  htmlFor="grid-branch"
                 >
-                  Sede
+                  branch
                 </label>
                 <div className="relative">
                   <select
                     onChange={(e) => {
-                      setSede(e.target.value);
+                      setbranch(e.target.value);
                     }}
                     className="appearance-none bg-white block w-full border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-gray-100 shadow-xl"
                     //className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 shadow-lg"
                     id="grid-state"
-                    value={sede}
+                    value={branch}
                   >
                     <option>Cartago</option>
                     <option>Limón</option>

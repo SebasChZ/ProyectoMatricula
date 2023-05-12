@@ -62,13 +62,13 @@ class SingletonDAO {
     }
 
     async registerUserFrom(jsonBody) {
-        
+
         if (!jsonBody.email || !jsonBody.password) {
             return res.status(400).json({ msg: 'Please enter all fields' });
         }
         //check for duplicate usernames in the db
         const duplicate = await User.findOne({ email: jsonBody.email }).exec();
-
+        
         if (duplicate) {
             return false;
         }
@@ -79,9 +79,11 @@ class SingletonDAO {
 
             //create and store the new user
             const newUserResult = await User.create({ "name": jsonBody.firstName, "lastName": jsonBody.lastName1 ,"photo": jsonBody.photo, 
-            "email": email, "password": hashedPassword });
+            "email": jsonBody.email, "password": hashedPassword });
+           
             return true;
-        } catch {
+        } catch (e){
+            console.log(e);
             return false;
         }
     }
@@ -245,14 +247,18 @@ class SingletonDAO {
 
             //check for find the user usernames in the db
             const jsonProfessor = req.body;
-            jsonProfessor["count"] = 3;
+            jsonProfessor["count"] = 0;
             const userFound = await User.findOne({ email: jsonProfessor.email }).exec();
-
+            
+            
+            jsonProfessor.branch = "CA";
+            
             if (userFound) {
                 return res.status(400).json({ message: 'Already exits a professor with this email' });
             } else {
                 //create and store the new user
                 jsonProfessor["count"] = await SingletonDAO.getInstance().getNextProffesorCode(jsonProfessor.branch);
+
                 jsonProfessor["code"] = jsonProfessor.branch +"-"+ jsonProfessor.count;
 
                 await Professor.create({
@@ -260,6 +266,7 @@ class SingletonDAO {
                     "email": jsonProfessor.email, "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber, 
                     "photo": jsonProfessor.photo, "branch": jsonProfessor.branch, "count": jsonProfessor.count
                 });
+
                 const jsonBody = {
                     "email": jsonProfessor.email,
                     "name": jsonProfessor.firstName,
@@ -269,9 +276,9 @@ class SingletonDAO {
                 };
                 let UserValue = await SingletonDAO.getInstance().registerUserFrom(jsonBody);
                 if (UserValue){                    
-                    res.status(200).json({ status: true, message: 'The professor has been created perfectly' });
+                    res.status(200).json({ status: true,password, message: 'The professor has been created perfectly his password' });
                 }else{
-                    
+                    console.log("Error al crear el usuario");
                     res.status(400).json({ status: false, message: 'The professor has not been created' });
                 }
             }

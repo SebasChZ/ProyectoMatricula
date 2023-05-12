@@ -32,8 +32,7 @@ const ProfessorSchema = new mongoose.Schema({
     },
     status: {
         type: Boolean, default: true
-    },
-    _id: false
+    }
 }, { collection: 'professor' });
 
 module.exports = mongoose.model('Professor', ProfessorSchema);
