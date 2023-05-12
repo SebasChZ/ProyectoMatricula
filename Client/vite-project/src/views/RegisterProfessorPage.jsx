@@ -1,4 +1,15 @@
+import { useState } from "react";
+
 export function RegisterProfessorPage() {
+  const [nombre, setNombre] = useState("");
+  const [apellido1, setApellido1] = useState("");
+  const [apellido2, setApellido2] = useState("");
+  const [oficina, setOficina] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [sede, setSede] = useState("");
+  const [email, setEmail] = useState("");
+  const [profilepic, setProfilepic] = useState("");
+
   return (
     <div className="flex items-center justify-center h-screen">
       <form className="w-full max-w-lg">

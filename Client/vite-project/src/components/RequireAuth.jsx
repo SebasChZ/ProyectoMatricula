@@ -9,7 +9,7 @@ const RequireAuth = ({ allowedRoles }) => {
   return auth?.roles?.find((role) => allowedRoles?.includes(role)) ? (
     <>
       <Sidebar />
-      <div className="sm:ml-[256px] overflow-hidden">
+      <div className="sm:ml-[256px] h-full overflow-hidden">
         <Outlet />
       </div>
     </>

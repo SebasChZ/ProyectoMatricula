@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const adminUserControllers = require('../../controllers/AdminUser');
+const verifyJWT = require('../../middleware/verifyJWT');
 
-router.route('/')
-    .get((req, res) => {
-        console.log('newUser');
-        
-    })
+router.route('/auth')
     .post(adminUserControllers.loginUser);
+router.route('/register')
+    .post(adminUserControllers.registerUser)
+    
 module.exports = router;

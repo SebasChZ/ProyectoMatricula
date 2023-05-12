@@ -1,3 +1,3 @@
 export function AssistantHomePage() {
-  return <h1>Assistant Home Page</h1>;
+  return <h1>AssistantHomePage</h1>;
 }
