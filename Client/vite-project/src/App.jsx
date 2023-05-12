@@ -11,6 +11,7 @@ import { HomeSwitch } from "./components/HomeSwitch";
 import { ProfessorHomePage } from "./views/ProfessorHomePage";
 import { AssistantHomePage } from "./views/AssistantHomePage";
 import { PlansViewPage } from "./views/PlansViewPage";
+import { VerPlanPage } from "./views/VerPlanPage";
 
 const ROLES = {
   Professor: 1597,
@@ -53,6 +54,7 @@ export default function App() {
         >
           <Route path="/home-professor" element={<ProfessorHomePage />} />
           <Route path="/plans" element={<PlansViewPage />} />
+          <Route path="/ver-plan" element={<VerPlanPage />} />
         </Route>
 
         {/* Coordinator routes */}

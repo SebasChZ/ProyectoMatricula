@@ -1,5 +1,4 @@
 import { PlanTrabajoCard } from "../components/PlanTrabajoCard";
-import { ActivityCard } from "../components/ActivityCard";
 
 export function PlansViewPage() {
   return (

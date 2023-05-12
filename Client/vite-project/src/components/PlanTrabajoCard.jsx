@@ -1,12 +1,14 @@
 // import React, { useContext } from "react";
 
+import { Link } from "react-router-dom";
+
 export const PlanTrabajoCard = () => {
   // const { planTrabajoName, fecha, actividades } = props.data;
   //   const { cartItems, addToCart, removeFromCart, updateCartItemCount } =
   //     useContext(ShopContext);
 
   return (
-    <div className="min-w-[420px] max-w-[480px] max-h-72 h-full p-6 bg-white border border-gray-200 rounded-lg shadow">
+    <div className="min-w-[420px] max-h-72 h-full p-6 bg-white border border-gray-200 rounded-lg shadow">
       <div className="flex justify-between">
         <div className="flex place-content-center h-20 w-20 rounded-full bg-indigo-100">
           <div className="flex flex-col place-content-center">
@@ -38,12 +40,12 @@ export const PlanTrabajoCard = () => {
           </p>
         </div>
         <div className="flex items-end">
-          <a
-            href="#"
+          <Link
+            to="/ver-plan"
             className="max-h-[36px] inline-flex items-center px-3 py-2 text-sm font-medium text-center text-indigo-400 bg-indigo-100 rounded-lg hover:bg-indigo-400 hover:text-white focus:ring-4 focus:outline-none focus:ring-indigo-800"
           >
             Ver
-          </a>
+          </Link>
         </div>
       </div>
     </div>
