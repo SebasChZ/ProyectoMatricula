@@ -79,7 +79,7 @@ class SingletonDAO {
 
             //create and store the new user
             const newUserResult = await User.create({ "name": jsonBody.firstName, "lastName": jsonBody.lastName1 ,"photo": jsonBody.photo, 
-            "email": jsonBody.email, "password": hashedPassword });
+            "email": jsonBody.email, "password": hashedPassword, "roles": jsonBody.roles });
            
             return true;
         } catch (e){
