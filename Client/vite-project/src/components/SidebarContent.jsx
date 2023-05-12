@@ -27,7 +27,7 @@ export function SidebarContent() {
         </Link>
       </Item>
       <Item>
-        <Link to="/createPlan" className="flex items-center space-x-2">
+        <Link to="/plans" className="flex items-center space-x-2">
           <EventNoteIcon />
           <span>Planes de trabajo</span>
         </Link>

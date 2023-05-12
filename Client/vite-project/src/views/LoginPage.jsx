@@ -29,39 +29,39 @@ export function LoginPage() {
   }, [email, password]);
 
   const loginUser = async () => {
-    try {
-      const response = await axios.post(
-        LOGIN_URL,
-        JSON.stringify({ email, password }),
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      console.log(JSON.stringify(response?.data));
-      //console.log(JSON.stringify(response));
-      // const accessToken = response?.data?.accessToken;
-      const roles = response?.data?.roles;
-      console.log(roles);
-      setAuth({ email, password, roles });
-      setEmail("");
-      setPassword("");
-      navigate("/home-switch");
-    } catch (err) {
-      if (!err?.response) {
-        console.log(err);
-        setErrorMsg("No Server Response");
-      } else if (err.response?.status === 400) {
-        setErrorMsg("Missing Username or Password");
-      } else if (err.response?.status === 401) {
-        setErrorMsg("Unauthorized");
-      } else {
-        setErrorMsg("Login Failed");
-      }
-      errRef.current.focus();
-    }
-    // let roles = [1597, 2264];
-    // setAuth({ email, password, roles });
-    // navigate("/home-switch");
+    // try {
+    //   const response = await axios.post(
+    //     LOGIN_URL,
+    //     JSON.stringify({ email, password }),
+    //     {
+    //       headers: { "Content-Type": "application/json" },
+    //     }
+    //   );
+    //   console.log(JSON.stringify(response?.data));
+    //   //console.log(JSON.stringify(response));
+    //   // const accessToken = response?.data?.accessToken;
+    //   const roles = response?.data?.roles;
+    //   console.log(roles);
+    //   setAuth({ email, password, roles });
+    //   setEmail("");
+    //   setPassword("");
+    //   navigate("/home-switch");
+    // } catch (err) {
+    //   if (!err?.response) {
+    //     console.log(err);
+    //     setErrorMsg("No Server Response");
+    //   } else if (err.response?.status === 400) {
+    //     setErrorMsg("Missing Username or Password");
+    //   } else if (err.response?.status === 401) {
+    //     setErrorMsg("Unauthorized");
+    //   } else {
+    //     setErrorMsg("Login Failed");
+    //   }
+    //   errRef.current.focus();
+    // }
+    let roles = [1597, 2264];
+    setAuth({ email, password, roles });
+    navigate("/home-switch");
   };
 
   const styles = {
