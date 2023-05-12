@@ -11,177 +11,253 @@ export function RegisterProfessorPage() {
   const [profilepic, setProfilepic] = useState("");
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <form className="w-full max-w-lg">
-        <h2 className="mb-9 text-[40px] text-center  leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-black">
-          Registrar Profesor
-        </h2>
+    <div className="flex flex-col h-screen">
+      <div className="container mx-auto fex-col">
+        <div className="w-6/12 ">
+          <form className="">
+            <h2 className="mb-9 text-[40px] text-center  leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-black">
+              Registrar Profesor
+            </h2>
 
-        <div className="flex flex-wrap -mx-20 mb-6">
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-nombre"
-            >
-              Nombre
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-lg"
-              id="grid-first-name"
-              type="text"
-              placeholder=""
-            />
-          </div>
-          <div className="w-full md:w-1/4 px-3">
-            <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-apellido1"
-            >
-              Apeliido 1
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 shadow-lg "
-              id="grid-last-name"
-              type="text"
-              placeholder=""
-            />
-          </div>
-          <div className="w-full md:w-1/4 px-3">
-            <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-apellido2"
-            >
-              Apeliido 2
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 shadow-lg"
-              id="grid-last-name"
-              type="text"
-              placeholder=""
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-wrap -mx-20 mb-6">
-          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-oficina"
-            >
-              Número de Oficina
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-lg"
-              id="grid-first-name"
-              type="text"
-              placeholder=""
-            />
-          </div>
-          <div className="w-full md:w-1/3 px-3">
-            <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-celular"
-            >
-              Número de Celular
-            </label>
-            <input
-              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500 shadow-lg"
-              id="grid-last-name"
-              type="text"
-              placeholder=""
-            />
-          </div>
-          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-            <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-sede"
-            >
-              Sede
-            </label>
-            <div className="relative">
-              <select
-                className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 shadow-lg"
-                id="grid-state"
-              >
-                <option>Cartago</option>
-                <option>Limón</option>
-                <option>San Carlos</option>
-                <option>San José</option>
-                <option>Alajuela</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
+            <div className="flex flex-wrap -mx-20 mb-6">
+              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                <label
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-nombre"
                 >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
+                  Nombre
+                </label>
+                <input
+                  className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
+                  id="grid-first-name"
+                  type="text"
+                  placeholder=""
+                />
+              </div>
+              <div className="w-full md:w-1/4 px-3">
+                <label
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-apellido1"
+                >
+                  Apeliido 1
+                </label>
+                <input
+                  className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
+
+                  id="grid-last-name"
+                  type="text"
+                  placeholder=""
+                />
+              </div>
+              <div className="w-full md:w-1/4 px-3">
+                <label
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-apellido2"
+                >
+                  Apeliido 2
+                </label>
+                <input
+                  className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
+
+                  id="grid-last-name"
+                  type="text"
+                  placeholder=""
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-wrap -mx-20 mb-6">
+              <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                <label
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-oficina"
+                >
+                  Número de Oficina
+                </label>
+                <input
+                  className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
+
+                  id="grid-first-name"
+                  type="text"
+                  placeholder=""
+                />
+              </div>
+              <div className="w-full md:w-1/3 px-3">
+                <label
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-celular"
+                >
+                  Número de Celular
+                </label>
+                <input
+                  className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
+
+                  id="grid-last-name"
+                  type="text"
+                  placeholder=""
+                />
+              </div>
+              <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+                <label
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-sede"
+                >
+                  Sede
+                </label>
+                <div className="relative">
+
+                  <select
+                    className="appearance-none bg-white block w-full border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-gray-100 shadow-xl"
+                    //className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 shadow-lg"
+                    id="grid-state"
+                  >
+                    <option>Cartago</option>
+                    <option>Limón</option>
+                    <option>San Carlos</option>
+                    <option>San José</option>
+                    <option>Alajuela</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg
+                      className="fill-current h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap -mx-20 mb-2">
+              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                <label
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-descripcion"
+                >
+                  Email
+                </label>
+                <input
+                  className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
+                  id="grid-first-name"
+                  type="text"
+                  placeholder=""
+                />
+              </div>
+              <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                <label
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-asignarEquipo"
+                >
+                  Asignar Equipo
+                </label>
+                <div className="relative">
+                  <select
+                    className="appearance-none bg-white block w-full border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-gray-100 shadow-xl"
+                    id="grid-state"
+                  >
+                    <option>Hay que cargar equipos</option>
+                    <option>Hay que cargar equipo</option>
+                    <option>Hay que cargar equipo</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg
+                      className="fill-current h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap -mx-20 mb-2">
+              <div className="w-full px-3 mb-6 md:mb-0">
+                <label
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                  htmlFor="grid-foto"
+                >
+                  Foto
+                </label>
+
+                <div className="flex justify-between items-center ">
+                  <div class="relative">
+                    <label title="Click to upload" for="photoFile" class="cursor-pointer flex items-center gap-4 px-6 py-4 before:border-gray-400/60 hover:before:border-gray-300 group dark:before:bg-darker dark:hover:before:border-gray-500 before:bg-gray-100 dark:before:border-gray-600 before:absolute before:inset-0 before:rounded-3xl before:border before:border-dashed before:transition-transform before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95">
+                      <div class="w-max relative">
+                        <img class="w-12" src="https://www.svgrepo.com/show/485545/upload-cicle.svg" alt="file upload icon" width="512" height="512" />
+                      </div>
+                      <div class="relative">
+                        <span class="block relative text-blue-500 group-hover:text-blue-500">
+                          Upload a file
+                        </span>
+                        <span class="mt-0.5 block text-sm text-gray-500 dark:text-gray-400">Max 2 MB</span>
+                      </div>
+                    </label>
+                    <input hidden="false" type="file" name="button2" id="photoFile" />
+                  </div>
+
+                  <div className="max-w-full w-3/12 h-full ">
+                    <button
+                      //onClick={loginUser}
+                      type="submit"
+                      className="w-full justify-center text-white bg-primary-1000 hover:bg-primary-1000 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-00747F dark:hover:bg-primary-1000 dark:focus:ring-primary-800"
+                    >
+                      Registrar
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div className="bg-gray-100 flex justify-around py-5 ">
+
+        <div class="flex items-center w-full justify-center">
+
+          <div class="max-w-xs">
+            <div class="bg-white shadow-xl rounded-lg py-3">
+
+              <div class="photo-wrapper px-2">
+                <img class="w-32 h-32 rounded-full mx-auto" src="https://www.gravatar.com/avatar/2acfb745ecf9d4dccb3364752d17f65f?s=260&d=mp" alt="John Doe" />
+              </div>
+              <div class="px-2">
+                <h3 class="text-center text-xl text-gray-900 font-light">Manitor Matinez</h3>
+                <div class="text-center text-gray-400 text-xs font-semibold">
+                  <p>Cartago</p>
+                </div>
+
+
+                <table class="text-xs my-3">
+                  <tbody><tr>
+                    <td class="px-2 py-2 text-gray-500 font-semibold">Address</td>
+                    <td class="px-2 py-2">Chatakpur-3, Dhangadhi Kailali</td>
+                  </tr>
+                    <tr>
+                      <td class="px-2 py-2 text-gray-500 font-semibold">Phone</td>
+                      <td class="px-2 py-2">+977 9955221114</td>
+                    </tr>
+                    <tr>
+                      <td class="px-2 py-2 text-gray-500 font-semibold">Email</td>
+                      <td class="px-2 py-2">john@exmaple.com</td>
+                    </tr>
+                  </tbody></table>
+
+                <div class="text-center my-3">
+                  <a class="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium" href="#">View Profile</a>
+                </div>
+
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex flex-wrap -mx-20 mb-2">
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-descripcion"
-            >
-              Descripción
-            </label>
-            <textarea
-              id="descripcion"
-              rows="4"
-              className="block p-2.5 w-full text-sm text-black bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-200 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Añadir Descripción"
-            ></textarea>
-          </div>
-          <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-            <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-asignarEquipo"
-            >
-              Asignar Equipo
-            </label>
-            <div className="relative">
-              <select
-                className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-state"
-              >
-                <option>Hay que cargar equipos</option>
-                <option>Hay que cargar equipo</option>
-                <option>Hay que cargar equipo</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg
-                  className="fill-current h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg>
-              </div>
-            </div>
-          </div>
         </div>
-        <div className="flex flex-wrap -mx-20 mb-2">
-          <div className="w-full px-3 mb-6 md:mb-0">
-            <label
-              className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-              htmlFor="grid-foto"
-            >
-              Foto
-            </label>
-            <input
-              className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-200 dark:text-gray-700 focus:outline-none dark:bg-gray-200 dark:border-gray-600 dark:placeholder-gray-400"
-              aria-describedby="user_avatar_help"
-              id="user_avatar"
-              type="file"
-            />
-          </div>
-        </div>
-      </form>
+      </div>
     </div>
   );
 }
