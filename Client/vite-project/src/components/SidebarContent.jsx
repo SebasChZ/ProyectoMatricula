@@ -27,7 +27,7 @@ export function SidebarContent() {
         </Link>
       </Item>
       <Item>
-        <Link to="/plans" className="flex items-center space-x-2">
+        <Link to="/createPlan" className="flex items-center space-x-2">
           <EventNoteIcon />
           <span>Planes de trabajo</span>
         </Link>
@@ -39,7 +39,7 @@ export function SidebarContent() {
         </Link>
       </Item>
       <Item>
-        <Link to="#" className="flex items-center space-x-2">
+        <Link to="/viewStudents" className="flex items-center space-x-2">
           <GroupIcon />
           <span>Estudiantes</span>
         </Link>
