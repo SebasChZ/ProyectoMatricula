@@ -10,9 +10,9 @@ export function ViewStudentsPage(){
                         <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8 ">
                             <div className="overflow-auto">
                             <div className="flex flex-wrap -mx-20 mb-4">
-                                <div className="mb-4 w-full px-3 md:mb-0 basis-full ml-20 flex flex-row w-32 ">
+                                <div className= "fixed top-16 w-full px-3 md:mb-0 basis-full ml-20 flex flex-row w-32 mt-0 ">
                                     <div>
-                                    <label className="text-blacktext-xs mb-2 block rounded-lg font-bold tracking-wide" for="grid-responsable"> Mostrar </label>
+                                    <label className="text-blacktext-xs mb-2 block rounded-lg font-bold tracking-wide" htmlFor="grid-Mostrar"> Mostrar </label>
 
                                     <div className="relative basis-1/4 ">
                                         <select className="block w-full appearance-none rounded border border-gray-200 bg-gray-800 px-4 py-3 pr-8 leading-tight text-gray-300 focus:border-gray-500 focus:bg-gray-600 focus:outline-none" id="grid-state">
@@ -44,7 +44,7 @@ export function ViewStudentsPage(){
                                         </button>
                                     </div>
 
-                                    <div className="relative basis-60 ml-auto mr-12 mt-9">
+                                    <div className="relative basis-60 ml-3 mt-9   ">
                                         <select className="block w-full appearance-none rounded border border-gray-800 bg-gray-800 px-4 py-3 pr-8 leading-tight text-gray-300 focus:border-gray-500 focus:bg-gray-600 focus:outline-none" id="grid-state">
                                             <option>Orden Alfabético</option>
                                             <option>Carne</option>
@@ -55,14 +55,12 @@ export function ViewStudentsPage(){
                                         </div>
                                     </div>
                                 </div>
-
-
-                                    
-                                </div>
+ 
+                            </div>
 
 
                                 <div class="max-h-80">
-                                    <table class="min-w-full border text-center text-left text-sm dark:border-neutral-500 font-light ml-4">
+                                    <table class=" min-w-full border text-center text-left text-sm dark:border-neutral-500 font-light ml-4">
 
                                         <thead className="border-b font-medium dark:border-neutral-500">
                                             <tr>
