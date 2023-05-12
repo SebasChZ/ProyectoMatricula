@@ -30,10 +30,11 @@ app.use(cookieParser());
 //routers
 
 app.use('/login', require('./routes/api/userRouter'));
-app.use(verifyJWT)
+//app.use(verifyJWT)
 app.use('/professor', require('./routes/api/professorRouter'));
 app.use('/student', require('./routes/api/studentRouter'));
-
+app.use('/team', require('./routes/api/teamRouter'));
+app.use('/activitiesPlan', require('./routes/api/activitiesPlanRouter'));
 
 
 //custom middleware of error handling
