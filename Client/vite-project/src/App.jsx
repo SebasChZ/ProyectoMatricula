@@ -4,14 +4,13 @@ import { Route, Routes } from "react-router-dom";
 import { LoginPage } from "./views/LoginPage";
 import { ForgotPasswordPage } from "./views/ForgotPasswordPage";
 import RequireAuth from "./components/RequireAuth";
-import { RegisterProfessorPage } from "./views/RegisterProfessorPage";
-import { Navigate } from "react-router-dom";
 import { CreatePlan } from "./views/CreatePlan";
 import { HomeSwitch } from "./components/HomeSwitch";
 import { ProfessorHomePage } from "./views/ProfessorHomePage";
 import { AssistantHomePage } from "./views/AssistantHomePage";
 import { PlansViewPage } from "./views/PlansViewPage";
 import { VerPlanPage } from "./views/VerPlanPage";
+import { RegisterProfessorPage } from "./views/RegisterProfessorPage";
 
 const ROLES = {
   Professor: 1597,
@@ -55,6 +54,7 @@ export default function App() {
           <Route path="/home-professor" element={<ProfessorHomePage />} />
           <Route path="/plans" element={<PlansViewPage />} />
           <Route path="/ver-plan" element={<VerPlanPage />} />
+          <Route path="/crear-plan" element={<CreatePlan />} />
         </Route>
 
         {/* Coordinator routes */}
@@ -73,7 +73,10 @@ export default function App() {
 
         {/* AssistantCA routes */}
         <Route element={<RequireAuth allowedRoles={[ROLES.AssistantCA]} />}>
-          <Route path="/registrar-profesor" element={<CreatePlan />} />
+          <Route
+            path="/registrar-profesor"
+            element={<RegisterProfessorPage />}
+          />
         </Route>
 
         {/*Catch all*/}
