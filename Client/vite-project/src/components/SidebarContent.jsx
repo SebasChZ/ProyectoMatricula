@@ -60,7 +60,7 @@ export function SidebarContent() {
         </Link>
       </Item>
       <Item>
-        <Link to="/profesores" className="flex items-center space-x-2">
+        <Link to="/registrar-profesor" className="flex items-center space-x-2">
           <GroupIcon />
           <span>Profesores</span>
         </Link>
