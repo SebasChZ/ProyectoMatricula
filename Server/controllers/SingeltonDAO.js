@@ -5,10 +5,13 @@ const User = require('../models/User');
 const Student = require('../models/Student');
 const Professor = require('../models/Professor');
 const Assistant = require('../models/Assistant');
-const WorkTeam = require('../models/WorkTeam');
+const Team = require('../models/Team.js');
+const ActivitiesPlan = require('../models/ActivitiesPlan.js');
+const Activity = require('../models/Activity.js');
 
 const bcrypt = require('bcrypt');
 const erorrHandler = require('../middleware/erorrHandler');
+
 class SingletonDAO {
     static instance;
     static count = 0;
@@ -335,30 +338,7 @@ class SingletonDAO {
         next();
     }
 
-     // modify professor
-     async unsuscribeProfessor(req, res, next) {
-        try {
-
-            //check for find the user usernames in the db
-            const jsonProfessor = req.body;
-            const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
-            if (!professorFound) {
-                return res.status(400).json({ message: 'This code dont exits ' });
-           
-            }else{
-                await Professor.updateOne({"code": jsonProfessor.code},{
-                    "status": 0,
-                });
-                                          
-                res.status(200).json({ state: true, message: 'The professor has been unsuscribe' });
-                
-            }
-
-        } catch (e) {
-            res.status(500).json({ message: `Server error: ${e}` });
-        }
-        next();
-    }
+    
 
      // get all professor
      async getAllProfessor(req, res, next) {
@@ -405,77 +385,108 @@ class SingletonDAO {
 
 
     //-------------------------------------------------------------------------------------
-    //                      Assistant Admin Functions
+    //                      Team Admin Functions
     //-------------------------------------------------------------------------------------
+    async createTeam(req, res, next) {
+        try {
 
-    async dissableProfessor(req, res, next) {
-        
-        profCode = req.params.code;
+            
+            const jsonTeam = req.body;
+            //create and store the new team
+           await Team.create({
+                "name": jsonTeam.name, "coordinator": jsonTeam.coordinator, "professorsArray": jsonTeam.professorsArray, "studentsArray": jsonTeam.studentsArray,
+                "branch": jsonTeam.branch, "academicYear": jsonTeam.academicYear, "workPlanId": jsonTeam.workPlanId
+            });           
+            
+            res.status(200).json({ state: true, message: 'The Tem has been created perfectly' });
+            
 
-        try{
-            const dissable = await Professor.updateOne({ code: profCode }, { $set: { state: false } });
-            res.status(200).json({ message: "Professor Status Updated" });
-        } catch (error) {
-            res.status(500).json({ message: `Server error: ${error}` });
-        } finally {
-            next();
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
         }
-    };
+        next();
+    }
 
-    async enableProfessor(req, res, next) {
-        
-        profCode = req.params.code;
+    async unsuscribeProfessor(req, res, next) {
+        try {
 
-        try{
-            const enableProfessor = await Professor.updateOne({ code: profCode }, { $set: { state: true } });
-            res.status(200).json({ message: "Professor Status Updated" });
-        } catch (error) {
-            res.status(500).json({ message: `Server error: ${error}` });
-        } finally {
-            next();
-        }
-    };
-
-    async modifyProfessor(req, res, next) {
-
-        try{
-            const { code, firstName, lastName1, lastName2, email, officePhoneNumber, phoneNumber, photo, branch } = req.body;
-
-            const professorToModify = await Professor.findOne({ code: code });
-
-            if (professorToModify) {
-                const professorModified = await Professor.updateOne({ code: code }, { $set: { firstName: firstName, lastName1: lastName1, lastName2: lastName2, email: email, officePhoneNumber: officePhoneNumber, phoneNumber: phoneNumber, photo: photo, branch: branch } });
-                if (professorModified) {
-                    res.status(200).json({ message: "Professor modified successfully" });
-                } else {
-                    res.status(400).json({ message: "Professor not modified" });
+            //check for find the user usernames in the db
+            const jsonBody = req.body;
+            const professorFound = await Professor.findOne({ code: jsonBody.professorCode }).exec();
+            if (!professorFound) {
+                return res.status(400).json({ message: 'This professor dont exits ' });
+           
+            }else{
+                const teamFound = await Team.findOne({ _id: jsonBody.teamCode }).exec();
+                
+                //For to remove the professor from the team
+                for (var i = 0; i < teamFound.professorsArray.length; i++) {
+                    
+                    if (teamFound.professorsArray[i].code == professorFound.code) {
+                        teamFound.professorsArray.splice(i, 1);
+                    }
                 }
+                
+                //update the team
+                await Team.updateOne({_id: jsonBody.teamCode},{"professorsArray":teamFound.professorsArray}).exec();
+                                          
+                res.status(200).json({ state: true, message: 'The professor has been unsuscribe from the team '+teamFound.name+' perfectly' });
+                
             }
 
-        }catch (error){
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
+
+    async addProfessorToTeam(req, res, next) {
+        
+        try{
+            //check for find the user usernames in the db
+            const jsonBody = req.body;
+            const professorFound = await Professor.findOne({ code: jsonBody.professorCode }).exec();
+            if (!professorFound) {
+                return res.status(400).json({ message: 'This professor dont exits ' });
+           
+            }else{
+                const teamFound = await Team.findOne({ _id: jsonBody.teamCode }).exec();
+                
+                //add the professor to the team
+                //update the team
+                await Team.updateOne({_id: jsonBody.teamCode},{  $push: { professorsArray:{"code":professorFound.code} } }).exec();
+                                          
+                res.status(200).json({ state: true, message: 'The professor has been unsuscribe from the team '+teamFound.name+' perfectly' });
+                
+            }
+        } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         } finally {
             next();
         }
-
     };
 
-    // WorkTeam Assistant Functions
+    
+
+    // Team Assistant Functions
 
     async setCoordinator(req, res, next) {
         
         try{
-            const { code, workTeam } = req.body;
-
-            const professorToAdd = await Professor.findOne({ code: code });
-
+            const { teamCode,professorCode } = req.body;
+            const professorToAdd = await Professor.findOne({ code: professorCode }).exec();
+            
             if (professorToAdd) {
-                const professorModified = await WorkTeam.updateOne({ workTeamId: workTeam }, { $set: { professorCode: code } });
-                if (professorModified) {
-                    res.status(200).json({ message: "Professor modified successfully" });
-                } else {
-                    res.status(400).json({ message: "Professor not found" });
-                }
+                const jsonProfessorToAdd = {
+                    "code": professorToAdd.code,
+                    "firstName": professorToAdd.firstName,
+                    "lastName1": professorToAdd.lastName1,
+                    "lastName2": professorToAdd.lastName2,
+                    "email": professorToAdd.email
+                };
+                await Team.updateOne({ _id: teamCode }, { $set: { coordinator: jsonProfessorToAdd } });
+                
+                res.status(200).json({ message: "The new coordinator set successfully" });
             } else {
                 res.status(400).json({ message: "Professor not found" });
             }
@@ -485,28 +496,68 @@ class SingletonDAO {
         next();
     };
 
-    async addProfessorToWorkTeam(req, res, next) {
+    //-------------------------------------------------------------------------------------
+    //                      ActivitiesPlan Admin Functions
+    //-------------------------------------------------------------------------------------
+    async createActivitiesPlan(req, res, next) {
+        try {
 
-        try{
-            const { code, workTeam } = req.body;
+            
+            const jsonCode = req.body;
 
-            const professorToAdd = await Professor.findOne({ code: code });
+            const activityToAdd = await Professor.findOne({ _id: jsonCode.activityId }).exec();
+            console.log(activityToAdd);
+           await ActivitiesPlan.create({
+                "name": jsonActivitiesPlan.name, "startDate": jsonActivitiesPlan.startDate, "endDate": jsonActivitiesPlan.endDate, "activitiesArray": jsonActivitiesPlan.activitiesArray
+            });           
+            
+            res.status(200).json({ state: true, message: 'The Plan has been created perfectly' });
+            
 
-            if (professorToAdd) {
-                const addedProfessor = await WorkTeam.updateOne({ workTeamId: workTeam }, { $push: { professorsArray: professorToAdd } });
-                if (addedProfessor) {
-                    res.status(200).json({ message: "Professor added successfully" });
-                } else {    
-                    res.status(400).json({ message: "Professor not added" });
-                }
-            } else {
-                res.status(400).json({ message: "Professor not found" });
-            }
-        }catch (error){
-            res.status(500).json({ message: `Server error: ${error}` });
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
         }
         next();
-    };
+    }
+
+    async addActivitytoPlan(req, res, next) {
+        try {
+
+            
+            const jsonBody = req.body;            
+            await ActivitiesPlan.updateOne({_id: jsonBody.planId},{  $push: { activitiesArray: jsonBody.activities } }).exec();
+            
+            res.status(200).json({ state: true, message: 'The Activities was added to play perfectly' });
+            
+
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
+
+    
+
+    async registerActivity(req, res, next) {
+        try {
+
+            
+            const jsonActivity = req.body;
+
+           await Activity.create({
+                "name": jsonActivity.name, "activityType": jsonActivity.activityType, "week": jsonActivity.week, "dateTime": jsonActivity.dateTime, 
+                "responsibleTeachers": jsonActivity.responsibleTeachers, "sessionLink": jsonActivity.sessionLink, "poster": jsonActivity.poster, 
+                "status": jsonActivity.status, "commentsArray": jsonActivity.commentsArray
+            });           
+            
+            res.status(200).json({ state: true, message: 'The Activity has been register perfectly' });
+            
+
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
     
 }
 

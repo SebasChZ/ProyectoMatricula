@@ -6,7 +6,7 @@ router.route('/')
     .get( adminProfessorControllers.getAllProfessor)
     .post(adminProfessorControllers.registerProfessor)
     .put(adminProfessorControllers.modifyProfessor)
-    .delete(adminProfessorControllers.unsuscribreProfessor)
+    
     
 
 router.route('/:id')
