@@ -89,7 +89,7 @@ export function ViewStudentsPage() {
                   </div>
                 </div>
 
-                <div class="max-h-80 overflow-auto">
+                <div class="max-h-80 overflow-auto scrollable">
                   <table class=" min-w-full border text-center text-left text-sm dark:border-neutral-500 font-light ml-4">
                     <thead className="border-b font-medium dark:border-neutral-500">
                       <tr>
