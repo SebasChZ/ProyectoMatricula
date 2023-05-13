@@ -13,6 +13,7 @@ import { PlansViewPage } from "./views/PlansViewPage";
 import { VerPlanPage } from "./views/VerPlanPage";
 import { RegisterProfessorPage } from "./views/RegisterProfessorPage";
 import { ModifyPlanTrabajoPage } from "./views/ModifyPlanTrabajoPage";
+import { ViewActivityPage } from "./views/ViewActivityPage";
 
 const ROLES = {
   Professor: 1597,
@@ -57,11 +58,9 @@ export default function App() {
           <Route path="/plans" element={<PlansViewPage />} />
           <Route path="/ver-plan" element={<VerPlanPage />} />
           <Route path="/crear-plan" element={<CreatePlan />} />
-          <Route
-            path="/modificar-plan"
-            element={<ModifyPlanTrabajoPage />}
-          />{" "}
+          <Route path="/modificar-plan" element={<ModifyPlanTrabajoPage />} />
           {/* This should not be here, it should be moved to just Coordinator routes */}
+          <Route path="/view-activity" element={<ViewActivityPage />} />
         </Route>
 
         {/* Coordinator routes */}
