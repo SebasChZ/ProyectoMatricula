@@ -57,7 +57,7 @@ export function LoginPage() {
       } else {
         setErrorMsg("Login Failed");
       }
-      errRef.current.focus();
+      errorRef.current.focus();
     }
     // let roles = [3123, 4478];
     // setAuth({ email, password, roles });
