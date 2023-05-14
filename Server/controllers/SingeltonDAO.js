@@ -648,6 +648,9 @@ class SingletonDAO {
                 },
             ])
 
+           
+
+
             //const branchName = await Branch.findOne({code: teamsFound.branch}).exec();
             //get the team from with a for
             let teamFound = null;
@@ -659,6 +662,8 @@ class SingletonDAO {
                 }
             }
 
+             //asign the activity plan to the team
+            teamFound.ActivitiesPlan = await SingletonDAO.getInstance().getActivitiesPlanFromIdParam(teamFound.activitiesPlanId)
             
             res.status(200).json({ state: true, teamsFound: teamFound });
         } catch (error) {
@@ -723,6 +728,38 @@ class SingletonDAO {
             res.status(200).json({ state: true, activitiesPlanFound: activitiesPlanFound });
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
+
+    async getActivitiesPlanFromIdParam(id) {
+
+        try {
+            
+            const activitiesPlan = await ActivitiesPlan.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "activity",
+                        localField: "activitiesArray",
+                        foreignField: "_id",
+                        as: "activitiesArray"
+                    }
+                }
+                
+
+            ]).exec();
+            //for to get the plan from the id
+            let activitiesPlanFound = null;
+            for (let i = 0; i < activitiesPlan.length; i++) {
+                if(activitiesPlan[i]._id.toString() == id){
+                    activitiesPlanFound = activitiesPlan[i];
+                    break;
+                }
+            }
+            return activitiesPlanFound;
+           
+        } catch (error) {
+            console.log(error);
         }
     }
 
