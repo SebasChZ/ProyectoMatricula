@@ -35,6 +35,7 @@ app.use('/professor', require('./routes/api/professorRouter'));
 app.use('/student', require('./routes/api/studentRouter'));
 app.use('/team', require('./routes/api/teamRouter'));
 app.use('/activitiesPlan', require('./routes/api/activitiesPlanRouter'));
+app.use('/activity', require('./routes/api/activityRouter'));
 
 
 //custom middleware of error handling

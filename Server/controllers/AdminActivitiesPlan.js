@@ -25,16 +25,32 @@ const addActivitytoPlan = async (req, res, next) => {
     next();
 }
 
-const createActivity = async (req, res, next) => {
+const getActivitiesPlan = async (req, res, next) => {
     try{
-        json = req.body;
-        json.dateTime = DateController.converStringToDate(json.dateTime);
-
-        await SingeltonDAO.registerActivity(req, res, next);
+        await SingeltonDAO.getActivitiesPlan(req, res, next);
     } catch(error) {
-        res.status(500).json({ message: "Error creating an Activity", error });
+        res.status(500).json({ message: "Error getting activities plan", error });
     }
     next();
 }
 
-module.exports = {createActivitiesPlan, createActivity, addActivitytoPlan};
+const getActivitiesPlanFromId = async (req, res, next) => {
+    try{
+        await SingeltonDAO.getActivitiesPlanFromId(req, res, next);
+    } catch(error) {
+        res.status(500).json({ message: "Error getting activities plan", error });
+    }
+    next();
+}
+
+const getNextActivity = async (req, res, next) => {
+    try{
+        await SingeltonDAO.getNextActivity(req, res, next);
+    } catch(error) {
+        res.status(500).json({ message: "Error getting next activity", error });
+    }
+    next();
+}
+
+
+module.exports = {createActivitiesPlan, addActivitytoPlan, getNextActivity, getActivitiesPlanFromId, getActivitiesPlan};
