@@ -57,7 +57,6 @@ export function ViewActivityPage() {
           <button
             onClick={openModal}
             className="text-white text-sm font-light bg-blue-950 px-6 rounded-3xl h-10"
-            to="/modificar-plan"
           >
             Ver comentarios
           </button>
