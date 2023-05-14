@@ -958,6 +958,99 @@ class SingletonDAO {
         }
         next();
     }
+    
+    async registerComment (req, res, next) {
+        try {
+
+           const jsonComment = req.body;
+
+           await Comment.create({
+                "comment": jsonComment.comment, "date": jsonComment.date, "user": jsonComment.user
+            });           
+            
+            res.status(200).json({ state: true, message: 'The Comment has been register perfectly' });
+            
+
+        } catch (e) {
+            res.status(500).json({ message: `Server error: ${e}` });
+        }
+        next();
+    }
+
+    async replyComment (req, res, next) {
+        
+        try{
+            const jsonComment = req.body;
+            const commentFound = await Comment.findOne({ commentId: jsonComment.commentId });
+            if (!commentFound) {
+                return res.status(400).json({ message: 'This comment dont exits ' });
+           
+            }else{
+                await Comment.updateOne({commentId: jsonComment.commentId},{  $push: { repliesArray: jsonComment.reply } });
+                                          
+                res.status(200).json({ state: true, message: 'The Reply has been register perfectly' });
+                 
+            }
+
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+        next();
+
+    }
+
+    async activateActivity (req, res, next) {
+        try{
+
+            const activity = req.body;
+            const activityFound = await Activity.findOne({ _id: activity.activityId });
+
+            if (!activityFound) {
+                return res.status(400).json({ message: 'This activity dont exits ' });
+            }
+
+            await Activity.updateOne({_id: activity.activityId},{  $set: { status: 1 } });
+        }catch (error) { 
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
+
+    async modifyActivity (req, res, next) {
+
+        try{
+            const activity = req.body;
+
+            const activityFound = await Activity.findOne({ _id: activity.activityId });
+
+            if (!activityFound) {
+                return res.status(400).json({ message: 'This activity dont exits ' });
+            }
+
+            await Activity.updateOne({_id: activity.activityId},{  $set: { name: activity.name, activityType: activity.activityType, week: activity.week, dateTime: activity.dateTime,
+                responsibleTeachers: activity.responsibleTeachers, sessionLink: activity.sessionLink, poster: activity.poster, status: activity.status } });
+
+            res.status(200).json({ state: true, message: 'The Activity has been modify perfectly' });
+
+        }catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+
+    }
+
+    async nextActivity (req, res, next) {
+        
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        try{
+            const nextActivity = await Activity.findOne({ dateTime: { $gte: today } }).sort({ dateTime: 1 }).limit(1);            
+            
+            res.status(200).json({ state: true, message: 'The next Activity has been found perfectly', nextActivity: nextActivity });
+
+        }catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
 
 }
 
