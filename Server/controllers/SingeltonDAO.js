@@ -8,9 +8,12 @@ const Assistant = require('../models/Assistant');
 const Team = require('../models/Team.js');
 const ActivitiesPlan = require('../models/ActivitiesPlan.js');
 const Activity = require('../models/Activity.js');
-
+const Branch = require('../models/Branch.js');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const erorrHandler = require('../middleware/erorrHandler');
+
+const xlsx = require('xlsx');
 
 class SingletonDAO {
     static instance;
@@ -68,7 +71,7 @@ class SingletonDAO {
         }
         //check for duplicate usernames in the db
         const duplicate = await User.findOne({ email: jsonBody.email }).exec();
-        
+
         if (duplicate) {
             return false;
         }
@@ -78,11 +81,13 @@ class SingletonDAO {
             const hashedPassword = await bcrypt.hash(jsonBody.password, 10);
 
             //create and store the new user
-            const newUserResult = await User.create({ "name": jsonBody.firstName, "lastName": jsonBody.lastName1 ,"photo": jsonBody.photo, 
-            "email": jsonBody.email, "password": hashedPassword, "roles": jsonBody.roles });
-           
+            const newUserResult = await User.create({
+                "name": jsonBody.firstName, "lastName": jsonBody.lastName1, "photo": jsonBody.photo,
+                "email": jsonBody.email, "password": hashedPassword, "roles": jsonBody.roles
+            });
+
             return true;
-        } catch (e){
+        } catch (e) {
             console.log(e);
             return false;
         }
@@ -96,7 +101,7 @@ class SingletonDAO {
             const { email, password } = req.body;
             const userFound = await User.findOne({ email: email }).exec();
             if (!userFound) {
-                res.status(400).json({status:false, message: 'User has no register' });
+                res.status(400).json({ status: false, message: 'User has no register' });
                 return false;
             }
             if (userFound) {
@@ -104,18 +109,18 @@ class SingletonDAO {
                 const match = await bcrypt.compare(password, userFound.password);
 
                 if (match) {
-                    
-                    res.status(200).json({ status:true, roles: [userFound.roles], message: 'User logged perfectly ' });
+
+                    res.status(200).json({ status: true, roles: [userFound.roles], message: 'User logged perfectly ' });
                     return true;
 
                 } else {
-                    res.status(400).json({ status:false, message: 'User not logged' });
+                    res.status(400).json({ status: false, message: 'User not logged' });
                     return false;
                 }
             }
 
         } catch {
-            res.status(500).json({status:false, message: 'Server error' });
+            res.status(500).json({ status: false, message: 'Server error' });
             return false;
         }
     }
@@ -131,10 +136,10 @@ class SingletonDAO {
 
         if (!studentToModify) {
             return res.status(400).json({ msg: 'studentId not found!' });
-        } 
-        
-        try{
-            if(studentToModify){
+        }
+
+        try {
+            if (studentToModify) {
                 const updateInformation = {
                     $set: {
                         firstName: newName,
@@ -149,11 +154,11 @@ class SingletonDAO {
 
                 if (modification) {
                     res.status(200).json({ msg: 'Student modified' });
-                } else{
+                } else {
                     res.status(400).json({ msg: 'Student not modified' });
                 }
-            }    
-        }catch{
+            }
+        } catch {
             res.status(500).json({ msg: 'Server error' });
         }
         next();
@@ -173,8 +178,8 @@ class SingletonDAO {
         next();
     }
 
-    async getAllCampus (req, res, next) {
-        
+    async getAllCampus(req, res, next) {
+
         //The request must have the parameter for the filter
         const campusActual = req.params.campus;
 
@@ -182,7 +187,7 @@ class SingletonDAO {
             const students = await Student.find({ academicCenter: campusActual }).sort({ studentId: 1 });
             res.status(200).json(students);
         } catch (error) {
-            res.status(500).json({ msg: 'Error getting all students by campus',error });
+            res.status(500).json({ msg: 'Error getting all students by campus', error });
         } finally {
             next();
         }
@@ -192,7 +197,7 @@ class SingletonDAO {
 
         //The request must have the parameter for the filter
         const idStart = req.params.id;
-      
+
         try {
             const students = await Student.find({ studentId: new RegExp(`^${idStart}`) }).sort({ studentId: 1 });
             res.status(200).json(students);
@@ -205,11 +210,11 @@ class SingletonDAO {
 
 
 
-    async registerExcel(data,req, res, next) {
-       
+    async registerExcel(data, req, res, next) {
+
 
         try {
-            
+
             // const arrayStudents = []
 
             // arrayStudents.push(data);
@@ -236,7 +241,61 @@ class SingletonDAO {
         }
 
     }
-      
+    async generateExcel (req, res, next) {
+        try {
+            const students = await Student.find({});
+            if (students.length > 0) {
+
+
+                let workbook = xlsx.utils.book_new();
+                
+                // Group students by campus
+                const campusGroups = {};
+                students.forEach(student => {
+                    const campus = student.academicCenter;
+                    if (!campusGroups[campus]) {
+                        campusGroups[campus] = [];
+                    }
+                    console.log(student);
+                    campusGroups[campus].push(student);
+                });
+                
+            
+                for (const campus in campusGroups) {
+                    const students = campusGroups[campus];
+                    
+                    // Convert each student into a simple object
+                    const data = students.map(student => {
+                        return {
+                            id: student.studentId,
+                            name: student.firstName,
+                            lastName1: student.lastName1,
+                            lastName2: student.lastName2,
+                            email: student.email,
+                            phone: student.cellPhoneNumber,
+                            campus: student.academicCenter,
+                        };
+                    });
+                    
+                    const worksheet = xlsx.utils.json_to_sheet(data);
+                    xlsx.utils.book_append_sheet(workbook, worksheet, campus);
+                }
+
+                //Write workbook to file
+                xlsx.writeFile(workbook, 'Students.xlsx');
+                
+                res.status(200).json({ message: "Excel file generated successfully" });
+                
+                
+            } else {
+                res.status(400).json({ msg: 'No students found' });
+            }
+        } catch (error) {
+            res.status(500).json({ msg: 'Server error' });
+        } finally {
+            next();
+        }
+    };
 
 
     //-------------------------------------------------------------------------------------
@@ -249,21 +308,21 @@ class SingletonDAO {
             const jsonProfessor = req.body;
             jsonProfessor["count"] = 0;
             const userFound = await User.findOne({ email: jsonProfessor.email }).exec();
-            
-            
+
+
             jsonProfessor.branch = "CA";
-            
+
             if (userFound) {
                 return res.status(400).json({ message: 'Already exits a professor with this email' });
             } else {
                 //create and store the new user
                 jsonProfessor["count"] = await SingletonDAO.getInstance().getNextProffesorCode(jsonProfessor.branch);
 
-                jsonProfessor["code"] = jsonProfessor.branch +"-"+ jsonProfessor.count;
+                jsonProfessor["code"] = jsonProfessor.branch + "-" + jsonProfessor.count;
 
                 await Professor.create({
                     "code": jsonProfessor.code, "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
-                    "email": jsonProfessor.email, "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber, 
+                    "email": jsonProfessor.email, "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber,
                     "photo": jsonProfessor.photo, "branch": jsonProfessor.branch, "count": jsonProfessor.count
                 });
 
@@ -275,9 +334,9 @@ class SingletonDAO {
                     "roles": 1597
                 };
                 let UserValue = await SingletonDAO.getInstance().registerUserFrom(jsonBody);
-                if (UserValue){                    
-                    res.status(200).json({ status: true,password, message: 'The professor has been created perfectly his password' });
-                }else{
+                if (UserValue) {
+                    res.status(200).json({ status: true, password, message: 'The professor has been created perfectly his password' });
+                } else {
                     console.log("Error al crear el usuario");
                     res.status(400).json({ status: false, message: 'The professor has not been created' });
                 }
@@ -317,33 +376,33 @@ class SingletonDAO {
                 return res.status(400).json({ message: 'This code dont exits ' });
             } else if (professorFoundByEmail && userFound.email != professorFoundByEmail.email) {
                 return res.status(400).json({ message: 'This email is invalid for user' })
-            }else{
-                
+            } else {
+
                 if (professorFound.code == professorFoundByEmail.code && professorFound.email == professorFoundByEmail.email) { //validaton for the email
 
-                    if (userFound.email != professorFoundByEmail.email){
-                        await User.updateOne({"email": professorFound.email}, {"email": jsonProfessor.email});
+                    if (userFound.email != professorFoundByEmail.email) {
+                        await User.updateOne({ "email": professorFound.email }, { "email": jsonProfessor.email });
                         console.log("never arrive here");
-                        await Professor.updateOne({"code": jsonProfessor.code},{
+                        await Professor.updateOne({ "code": jsonProfessor.code }, {
                             "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
-                            "email": jsonProfessor.email, "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber, 
+                            "email": jsonProfessor.email, "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber,
                             "photo": jsonProfessor.photo
                         });
-                    }else if (userFound.email == professorFoundByEmail.email){
-    
-                        await Professor.updateOne({"code": jsonProfessor.code},{
+                    } else if (userFound.email == professorFoundByEmail.email) {
+
+                        await Professor.updateOne({ "code": jsonProfessor.code }, {
                             "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
-                            "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber, 
+                            "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber,
                             "photo": jsonProfessor.photo
                         });
-                    }                  
-                              
+                    }
+
                     res.status(200).json({ state: true, message: 'The professor has been modified perfectly' });
-                }else{
+                } else {
                     res.status(400).json({ state: false, message: 'Already exits a professor with this email' });
                 }
-                
-                
+
+
             }
 
         } catch (e) {
@@ -352,20 +411,20 @@ class SingletonDAO {
         next();
     }
 
-    
 
-     // get all professor
-     async getAllProfessor(req, res, next) {
+
+    // get all professor
+    async getAllProfessor(req, res, next) {
         try {
             const professorsFound = await Professor.find({}).exec();
             if (!professorsFound) {
                 return res.status(400).json({ message: 'This code dont exits ' });
-           
-            }else{
-               
-                                          
+
+            } else {
+
+
                 res.status(200).json({ state: true, professorsFounds: professorsFound });
-                
+
             }
 
         } catch (e) {
@@ -374,8 +433,8 @@ class SingletonDAO {
         next();
     }
 
-     // modify professor
-     async getProfessorByID(req, res, next) {
+    // modify professor
+    async getProfessorByID(req, res, next) {
         try {
 
             //check for find the user usernames in the db
@@ -383,11 +442,11 @@ class SingletonDAO {
             const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
             if (!professorFound) {
                 return res.status(400).json({ message: 'This code dont exits ' });
-           
-            }else{
-                                                         
-                res.status(200).json({ state: true, "professor":professorFound });
-                
+
+            } else {
+
+                res.status(200).json({ state: true, "professor": professorFound });
+
             }
 
         } catch (e) {
@@ -404,16 +463,16 @@ class SingletonDAO {
     async createTeam(req, res, next) {
         try {
 
-            
+
             const jsonTeam = req.body;
             //create and store the new team
-           await Team.create({
+            await Team.create({
                 "name": jsonTeam.name, "coordinator": jsonTeam.coordinator, "professorsArray": jsonTeam.professorsArray, "studentsArray": jsonTeam.studentsArray,
                 "branch": jsonTeam.branch, "academicYear": jsonTeam.academicYear, "workPlanId": jsonTeam.workPlanId
-            });           
-            
+            });
+
             res.status(200).json({ state: true, message: 'The Tem has been created perfectly' });
-            
+
 
         } catch (e) {
             res.status(500).json({ message: `Server error: ${e}` });
@@ -425,27 +484,27 @@ class SingletonDAO {
         try {
 
             //check for find the user usernames in the db
-            const jsonBody = req.body;
-            const professorFound = await Professor.findOne({ code: jsonBody.professorCode }).exec();
+            const { professorCode } = req.body;
+            const professorFound = await Professor.findOne({ code: professorCode }).exec();
             if (!professorFound) {
                 return res.status(400).json({ message: 'This professor dont exits ' });
-           
-            }else{
+
+            } else {
                 const teamFound = await Team.findOne({ _id: jsonBody.teamCode }).exec();
-                
+
                 //For to remove the professor from the team
                 for (var i = 0; i < teamFound.professorsArray.length; i++) {
-                    
+
                     if (teamFound.professorsArray[i].code == professorFound.code) {
                         teamFound.professorsArray.splice(i, 1);
                     }
                 }
-                
+
                 //update the team
-                await Team.updateOne({_id: jsonBody.teamCode},{"professorsArray":teamFound.professorsArray}).exec();
-                                          
-                res.status(200).json({ state: true, message: 'The professor has been unsuscribe from the team '+teamFound.name+' perfectly' });
-                
+                await Team.updateOne({ _id: jsonBody.teamCode }, { "professorsArray": teamFound.professorsArray }).exec();
+
+                res.status(200).json({ state: true, message: 'The professor has been unsuscribe from the team ' + teamFound.name + ' perfectly' });
+
             }
 
         } catch (e) {
@@ -455,24 +514,18 @@ class SingletonDAO {
     }
 
     async addProfessorToTeam(req, res, next) {
-        
-        try{
+
+        try {
             //check for find the user usernames in the db
-            const jsonBody = req.body;
-            const professorFound = await Professor.findOne({ code: jsonBody.professorCode }).exec();
-            if (!professorFound) {
-                return res.status(400).json({ message: 'This professor dont exits ' });
-           
-            }else{
-                const teamFound = await Team.findOne({ _id: jsonBody.teamCode }).exec();
-                
-                //add the professor to the team
-                //update the team
-                await Team.updateOne({_id: jsonBody.teamCode},{  $push: { professorsArray:{"code":professorFound.code} } }).exec();
-                                          
-                res.status(200).json({ state: true, message: 'The professor has been unsuscribe from the team '+teamFound.name+' perfectly' });
-                
-            }
+            const { codes } = req.body;
+
+            //add the professor to the team
+            //update the team
+            await Team.updateOne({ _id: jsonBody.teamCode }, { $push: { professorsArray: codes } }).exec();
+
+            res.status(200).json({ state: true, message: 'The professor has been unsuscribe from the team ' + teamFound.name + ' perfectly' });
+
+
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         } finally {
@@ -480,16 +533,16 @@ class SingletonDAO {
         }
     };
 
-    
+
 
     // Team Assistant Functions
 
     async setCoordinator(req, res, next) {
-        
-        try{
-            const { teamCode,professorCode } = req.body;
+
+        try {
+            const { teamCode, professorCode } = req.body;
             const professorToAdd = await Professor.findOne({ code: professorCode }).exec();
-            
+
             if (professorToAdd) {
                 const jsonProfessorToAdd = {
                     "code": professorToAdd.code,
@@ -499,12 +552,177 @@ class SingletonDAO {
                     "email": professorToAdd.email
                 };
                 await Team.updateOne({ _id: teamCode }, { $set: { coordinator: jsonProfessorToAdd } });
-                
+
                 res.status(200).json({ message: "The new coordinator set successfully" });
             } else {
                 res.status(400).json({ message: "Professor not found" });
             }
-        }catch (error){
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+        next();
+    };
+
+    // Team Assistant Functions
+
+    async addPlanToTeam(req, res, next) {
+
+        try {
+            const { teamId, activityPLanId } = req.body;
+            const jsonObject = req.body;
+            const plan = await ActivitiesPlan.findOne({ _id: activityPLanId }).exec();
+
+            if (plan) {
+
+                await Team.updateOne({ _id: teamId }, { $set: { activitiesPlanId: activityPLanId } });
+
+                res.status(200).json({ status: true, message: "The activity plan set successfully" });
+            } else {
+                res.status(400).json({ status: false, message: "The activity plan dont exist" });
+            }
+        } catch (error) {
+            res.status(500).json({ status: false, message: `Server error: ${error}` });
+        }
+        next();
+    };
+
+    async getTeams(req, res, next) {
+        try {
+            const teamsFound = await Team.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "branch",
+                        localField: "branch",
+                        foreignField: "code",
+                        as: "branch"
+                    }
+                },
+                {
+                    $set: {
+                        branch: { $arrayElemAt: ["$branch.name", 0] }
+                        
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "professor",
+                        localField: "professorsArray",
+                        foreignField: "code",
+                        as: "professorsArray"
+                    }
+                }
+                //get the size of the array studen
+                ,
+                {
+                    $set: {
+                        studentCount: { $size: "$studentsArray" }
+                    }
+                },
+                
+                {
+                    $lookup:
+                    {
+                        from: "activitiesPlan",
+                        localField: "activitiesPlanId",
+                        foreignField: "_id",
+                        as: "activityPLan"
+                    }
+                }
+                ,
+                {
+                    $set: {
+                        activityPLan: { $arrayElemAt: ["$activityPLan", 0] }
+                        
+                    }
+                },
+            ])
+
+            //const branchName = await Branch.findOne({code: teamsFound.branch}).exec();
+
+            res.status(200).json({ state: true, teamsFound: teamsFound });
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+        next();
+    };
+
+    async getTeamFromId(req, res, next) {
+        try {
+            const teamId= req.params.id;
+            //print fo team id
+            console.log(teamId);
+            const teamsFound = await Team.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "branch",
+                        localField: "branch",
+                        foreignField: "code",
+                        as: "branch"
+                    }
+                },
+                {
+                    $set: {
+                        branch: { $arrayElemAt: ["$branch.name", 0] }
+                        
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "professor",
+                        localField: "professorsArray",
+                        foreignField: "code",
+                        as: "professorsArray"
+                    }
+                }
+                //get the size of the array studen
+                ,
+                {
+                    $set: {
+                        studentCount: { $size: "$studentsArray" }
+                    }
+                },
+                
+                {
+                    $lookup:
+                    {
+                        from: "activitiesPlan",
+                        localField: "activitiesPlanId",
+                        foreignField: "_id",
+                        as: "activityPLan"
+                    }
+                }
+                ,
+                {
+                    $set: {
+                        activityPLan: { $arrayElemAt: ["$activityPLan", 0] }
+                        
+                    }
+                },
+            ])
+
+           
+
+
+            //const branchName = await Branch.findOne({code: teamsFound.branch}).exec();
+            //get the team from with a for
+            let teamFound = null;
+            for (let i = 0; i < teamsFound.length; i++) {
+                
+                if(teamsFound[i]._id.toString() == teamId){
+                    teamFound = teamsFound[i];
+                    break;
+                }
+            }
+
+             //asign the activity plan to the team
+            teamFound.ActivitiesPlan = await SingletonDAO.getInstance().getActivitiesPlanFromIdParam(teamFound.activitiesPlanId)
+            
+            res.status(200).json({ state: true, teamsFound: teamFound });
+        } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         }
         next();
@@ -513,20 +731,108 @@ class SingletonDAO {
     //-------------------------------------------------------------------------------------
     //                      ActivitiesPlan Admin Functions
     //-------------------------------------------------------------------------------------
+
+    async getActivitiesPlan(req, res, next) {
+
+        try {
+
+            const activitiesPlanFound = await ActivitiesPlan.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "activity",
+                        localField: "activitiesArray",
+                        foreignField: "_id",
+                        as: "activitiesArray"
+                    }
+                }
+                
+
+            ]).exec();
+            res.status(200).json({ state: true, activitiesPlanFound: activitiesPlanFound });
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
+
+    async getActivitiesPlanFromId(req, res, next) {
+
+        try {
+            const planId= req.params.id;
+            const activitiesPlan = await ActivitiesPlan.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "activity",
+                        localField: "activitiesArray",
+                        foreignField: "_id",
+                        as: "activitiesArray"
+                    }
+                }
+                
+
+            ]).exec();
+            //for to get the plan from the id
+            let activitiesPlanFound = null;
+            for (let i = 0; i < activitiesPlan.length; i++) {
+                if(activitiesPlan[i]._id.toString() == planId){
+                    activitiesPlanFound = activitiesPlan[i];
+                    break;
+                }
+            }
+
+            res.status(200).json({ state: true, activitiesPlanFound: activitiesPlanFound });
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
+
+    async getActivitiesPlanFromIdParam(id) {
+
+        try {
+            
+            const activitiesPlan = await ActivitiesPlan.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "activity",
+                        localField: "activitiesArray",
+                        foreignField: "_id",
+                        as: "activitiesArray"
+                    }
+                }
+                
+
+            ]).exec();
+            //for to get the plan from the id
+            let activitiesPlanFound = null;
+            for (let i = 0; i < activitiesPlan.length; i++) {
+                if(activitiesPlan[i]._id.toString() == id){
+                    activitiesPlanFound = activitiesPlan[i];
+                    break;
+                }
+            }
+            return activitiesPlanFound;
+           
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     async createActivitiesPlan(req, res, next) {
         try {
 
-            
-            const jsonCode = req.body;
 
-            const activityToAdd = await Professor.findOne({ _id: jsonCode.activityId }).exec();
+            const jsonActivitiesPlan = req.body;
+
+            const activityToAdd = await Professor.findOne({ _id: jsonActivitiesPlan.activityId }).exec();
             console.log(activityToAdd);
-           await ActivitiesPlan.create({
+            await ActivitiesPlan.create({
                 "name": jsonActivitiesPlan.name, "startDate": jsonActivitiesPlan.startDate, "endDate": jsonActivitiesPlan.endDate, "activitiesArray": jsonActivitiesPlan.activitiesArray
-            });           
-            
+            });
+
             res.status(200).json({ state: true, message: 'The Plan has been created perfectly' });
-            
+
 
         } catch (e) {
             res.status(500).json({ message: `Server error: ${e}` });
@@ -537,12 +843,12 @@ class SingletonDAO {
     async addActivitytoPlan(req, res, next) {
         try {
 
-            
-            const jsonBody = req.body;            
-            await ActivitiesPlan.updateOne({_id: jsonBody.planId},{  $push: { activitiesArray: jsonBody.activities } }).exec();
-            
+
+            const jsonBody = req.body;
+            await ActivitiesPlan.updateOne({ _id: jsonBody.planId }, { $push: { activitiesArray: jsonBody.activities } }).exec();
+
             res.status(200).json({ state: true, message: 'The Activities was added to play perfectly' });
-            
+
 
         } catch (e) {
             res.status(500).json({ message: `Server error: ${e}` });
@@ -550,31 +856,111 @@ class SingletonDAO {
         next();
     }
 
-    
+    async getActivities(req, res, next) {
+        try {
+            const jsonObject = req.body;
+            const activityPlan = await ActivitiesPlan.aggregate([
+                {
+                    $match: {
+                        _id: mongoose.Types.ObjectId(jsonObject.planId)
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "activity",
+                        localField: "activitiesArray",
+                        foreignField: "_id",
+                        as: "activitiesArray"
+                    }
+                },
+
+            ]).exec();
+            console.log(activityPlan);
+
+            res.status(200).json({ state: true, activityPlan: activityPlan });
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+        next();
+    }
+
+    async getNextActivity(req, res, next) {
+        try {
+            const jsonObject = req.body;
+            console.log(jsonObject.planId);
+            const activityPlans = await ActivitiesPlan.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "activity",
+                        localField: "activitiesArray",
+                        foreignField: "_id",
+                        as: "activitiesArray"
+                    }
+                },
+
+            ]).exec();
+            // for to get the plan id
+            let activitiesPlan = {}
+            for (let i = 0; i < activityPlans.length; i++) {
+                if (activityPlans[i]._id == jsonObject.planId) {
+                    activitiesPlan = activityPlans[i];
+                }
+            }
+
+            //get the now date
+            let now = new Date();
+            //get the next activity
+            let nextActivity = {}
+            for (let i = 0; i < activitiesPlan.activitiesArray.length; i++) {
+                //print the date
+               
+                if (activitiesPlan.activitiesArray[i].dateTime > now) {
+
+                    nextActivity = activitiesPlan.activitiesArray[i];
+                    break;
+                }
+            }
+
+            
+
+            //console.log(activitiesPlan);
+            console.log(nextActivity);
+
+            res.status(200).json({ state: true, activityPlan: nextActivity });
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+        next();
+    }
+
+
+
 
     async registerActivity(req, res, next) {
         try {
 
-            
+
             const jsonActivity = req.body;
 
-           await Activity.create({
-                "name": jsonActivity.name, "activityType": jsonActivity.activityType, "week": jsonActivity.week, "dateTime": jsonActivity.dateTime, 
-                "responsibleTeachers": jsonActivity.responsibleTeachers, "sessionLink": jsonActivity.sessionLink, "poster": jsonActivity.poster, 
+            await Activity.create({
+                "name": jsonActivity.name, "activityType": jsonActivity.activityType, "week": jsonActivity.week, "dateTime": jsonActivity.dateTime,
+                "responsibleTeachers": jsonActivity.responsibleTeachers, "sessionLink": jsonActivity.sessionLink, "poster": jsonActivity.poster,
                 "status": jsonActivity.status, "commentsArray": jsonActivity.commentsArray
-            });           
-            
+            });
+
             res.status(200).json({ state: true, message: 'The Activity has been register perfectly' });
-            
+
 
         } catch (e) {
             res.status(500).json({ message: `Server error: ${e}` });
         }
         next();
     }
-    
+
 }
 
 const singletonDAO = SingletonDAO.getInstance();
 
-module.exports = singletonDAO ;
+module.exports = singletonDAO;

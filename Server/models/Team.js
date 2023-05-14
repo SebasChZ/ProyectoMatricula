@@ -26,9 +26,9 @@ const teamSchema = new mongoose.Schema({
 
     coordinator: { type: coordinatorSchema, required: true },
 
-    professorsArray: [{ code: String, _id: false}],
+    professorsArray: [String],
 
-    studentsArray: [{ studentId : String, _id: false}],
+    studentsArray: [String],
 
     branch: { type: String },
 

@@ -3,11 +3,15 @@ const router = express.Router();
 const adminTeam = require('../../controllers/AdminTeam');
 
 router.route('/')
-    .get((req, res) => {
-        console.log('newUser');
-    })
+    .get(adminTeam.getTeams)
     .post(adminTeam.createTeam);
 
+router.route('/id/:id')
+    .get(adminTeam.getTeamFromId)
+
+router.route('/plan')
+    .put(adminTeam.addPlanToTeam)
+    
 router.route('/coordinator')
     .put(adminTeam.changeCoordinator)
 

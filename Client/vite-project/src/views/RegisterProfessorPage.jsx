@@ -21,14 +21,16 @@ export function RegisterProfessorPage() {
 
   useEffect(() => {
     setErrorMsg("");
-  }, [firstName,
+  }, [
+    firstName,
     lastName1,
     lastName2,
     officePhoneNumber,
     phoneNumber,
     branch,
     email,
-    photo]);
+    photo,
+  ]);
 
   const registerProfessor = async (e) => {
     e.preventDefault();
@@ -36,7 +38,6 @@ export function RegisterProfessorPage() {
       const response = await axios.post(
         LOGIN_URL,
         JSON.stringify({
-
           firstName,
           lastName1,
           lastName2,
@@ -66,10 +67,9 @@ export function RegisterProfessorPage() {
       navigate("/home-switch");
     } catch (err) {
       if (!err?.response) {
-        
         setErrorMsg("No Server Response" + err);
       } else if (err.response?.status === 400) {
-        setErrorMsg("Missing Username or Password" +err.response?.data);
+        setErrorMsg("Missing Username or Password" + err.response?.data);
       } else if (err.response?.status === 401) {
         setErrorMsg("Unauthorized");
       } else {
@@ -141,7 +141,7 @@ export function RegisterProfessorPage() {
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-lastName2"
                 >
-                  Apeliido 2
+                  Apellido 2
                 </label>
                 <input
                   onChange={(e) => {

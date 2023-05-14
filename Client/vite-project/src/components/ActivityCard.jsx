@@ -1,6 +1,7 @@
 // import React, { useContext } from "react";
 import chessImg from "../img/chess.png";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { Link } from "react-router-dom";
 
 export const ActivityCard = () => {
   // const { planTrabajoName, fecha, actividades } = props.data;
@@ -30,7 +31,9 @@ export const ActivityCard = () => {
             <button className="text-blue-500">
               <MoreVertIcon />
             </button>
-            <button className="text-green-500">Ver</button>
+            <Link className="text-green-500" to="/view-activity">
+              Ver
+            </Link>
           </div>
         </div>
       </div>

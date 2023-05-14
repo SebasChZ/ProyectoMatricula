@@ -54,7 +54,35 @@ const registerUser = async (req, res, next) => {
     next();
 }
 
+const updatePassword = async (req, res, next) => {
+    try{
+        const jsonBody = req.body;
+
+        if (!jsonBody.usuario || !jsonBody.newPassword || !jsonBody.confirmPassword) {
+            return res.status(400).json({ msg: 'Please enter all fields' });
+        }
+
+        if (jsonBody.newPassword !== jsonBody.confirmPassword) {
+            return res.status(400).json({ msg: 'Passwords do not match' });
+        }
+
+        const userToUpdate = await User.findOne({ email: jsonBody.usuario });
+        
+        if (!userToUpdate) {
+            return res.status(400).json({ msg: 'User does not exist' });
+        }
+
+        const hashedPassword = await bcrypt.hash(jsonBody.newPassword, 10);
+
+        await User.updateOne({ email: jsonBody.usuario }, { password: hashedPassword });
+
+        res.status(200).json({ msg: 'Password updated' });
+
+    }catch(e){
+        res.status(500).json({ msg: 'Server error'+ e });
+    }
+}
 
 
 
-module.exports = {loginUser,registerUser};
+module.exports = {loginUser,registerUser,updatePassword};
