@@ -3,6 +3,7 @@ import chessImg from "../img/chess.png";
 import { ActivityComments } from "../components/ActivityComments";
 import Modal from "../components/Modal";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export function ViewActivityPage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,9 +41,9 @@ export function ViewActivityPage() {
                 <span className="text-gray-600 text-xs block">LI-08</span>
               </div>
             </div>
-            <button className="py-3">
+            <Link to="/modificar-actividad" className="py-3">
               <MoreHorizIcon />
-            </button>
+            </Link>
           </div>
           <img src={chessImg} className="rounded-2xl" />
           <div className="mt-4 mb-4">
