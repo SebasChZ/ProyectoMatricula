@@ -89,7 +89,13 @@ const cancelActivity = async (req, res, next) => {
     }
 }
 
+const doneActivity = async (req, res, next) => {
+    try{
+        await SingeltonDAO.doneActivity(req, res, next);
+    }catch(error) {
+        res.status(500).json({ message: "Error completing an Activity", error });
+    }
+}
 
 
-
-module.exports = {createActivity, modifyActivity, registerComment, replyComment, publishActivity, getActivities, getActivityFromId, cancelActivity};
+module.exports = {createActivity, modifyActivity, registerComment, replyComment, publishActivity, getActivities, getActivityFromId, cancelActivity, doneActivity};

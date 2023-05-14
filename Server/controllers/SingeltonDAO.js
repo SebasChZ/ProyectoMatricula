@@ -1076,6 +1076,29 @@ class SingletonDAO {
 
     }
 
+    async doneActivity (req, res, next) {
+
+        try{
+
+            const activity = req.body;            
+            const activityFound = await Activity.findOne({ _id: activity.activityId });
+            if (!activityFound) {
+                return res.status(400).json({ message: 'This activity dont exits ' });
+            }
+
+            let date = new Date();
+            
+            await Activity.updateOne({_id: activity.activityId},{  $set: { status: 3, evidence: { comment: activity.evidence, date: date} } });
+            res.status(200).json({ state: true, message: 'The Activity has been cancel' });
+
+
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+
+    }
+
+
 }
 
 const singletonDAO = SingletonDAO.getInstance();
