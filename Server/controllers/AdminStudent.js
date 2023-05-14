@@ -69,9 +69,26 @@ const registerExcel = async (req, res, next) => {
     next();
 };
 
+const generateExcel = async (req, res, next) => {
+    
+        try {
+            
+            await SingeltonDAO.generateExcel(req, res, next);
+            
+        }catch(error)
+        {
+            res.status(500).json({ message: "Error generating excel file", error });
+        }
+    
+        
+        next();
+};
+
+
 module.exports = {
     modifyStudent,
     getAllAlphabetical,
     getAllCampus,
     getAllId,
-    registerExcel};
+    registerExcel,
+    generateExcel};

@@ -21,10 +21,12 @@ router.route('/all')
     .get(adminStudentControllers.getAllAlphabetical)
 
 //Consultar todos los estudiantes por Id
+//YA PROBADO
 router.route('/id/:id')
     .get(adminStudentControllers.getAllId)
 
-
+router.route('/excel')
+    .get(adminStudentControllers.generateExcel)
 
 
 module.exports = router;

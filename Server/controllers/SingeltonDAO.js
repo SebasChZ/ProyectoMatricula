@@ -13,6 +13,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const erorrHandler = require('../middleware/erorrHandler');
 
+const xlsx = require('xlsx');
+
 class SingletonDAO {
     static instance;
     static count = 0;
@@ -239,7 +241,61 @@ class SingletonDAO {
         }
 
     }
+    async generateExcel (req, res, next) {
+        try {
+            const students = await Student.find({});
+            if (students.length > 0) {
 
+
+                let workbook = xlsx.utils.book_new();
+                
+                // Group students by campus
+                const campusGroups = {};
+                students.forEach(student => {
+                    const campus = student.academicCenter;
+                    if (!campusGroups[campus]) {
+                        campusGroups[campus] = [];
+                    }
+                    console.log(student);
+                    campusGroups[campus].push(student);
+                });
+                
+            
+                for (const campus in campusGroups) {
+                    const students = campusGroups[campus];
+                    
+                    // Convert each student into a simple object
+                    const data = students.map(student => {
+                        return {
+                            id: student.studentId,
+                            name: student.firstName,
+                            lastName1: student.lastName1,
+                            lastName2: student.lastName2,
+                            email: student.email,
+                            phone: student.cellPhoneNumber,
+                            campus: student.academicCenter,
+                        };
+                    });
+                    
+                    const worksheet = xlsx.utils.json_to_sheet(data);
+                    xlsx.utils.book_append_sheet(workbook, worksheet, campus);
+                }
+
+                //Write workbook to file
+                xlsx.writeFile(workbook, 'Students.xlsx');
+                
+                res.status(200).json({ message: "Excel file generated successfully" });
+                
+                
+            } else {
+                res.status(400).json({ msg: 'No students found' });
+            }
+        } catch (error) {
+            res.status(500).json({ msg: 'Server error' });
+        } finally {
+            next();
+        }
+    };
 
 
     //-------------------------------------------------------------------------------------
