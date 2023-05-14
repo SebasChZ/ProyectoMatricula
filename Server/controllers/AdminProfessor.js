@@ -7,7 +7,7 @@ const getAllProfessor = async (req, res, next) => {
 
 const modifyProfessor = async (req, res, next) => {
     const jsonProfessor = req.body;
-    if(jsonProfessor.firstName == "" || jsonProfessor.Email == "" || jsonProfessor.Password == "" || jsonProfessor.phoneNumber == "" ||
+    if(jsonProfessor.firstName == "" || jsonProfessor.Email == "" || jsonProfessor.phoneNumber == "" ||
         jsonProfessor.officePhoneNumber == "") {
         return res.status(400).json({ msg: 'Please enter all fields' });
     } 

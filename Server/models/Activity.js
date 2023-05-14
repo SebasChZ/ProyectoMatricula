@@ -1,11 +1,27 @@
 const mongoose = require('mongoose');
 
+//create the reply schema
+const replySchema = new mongoose.Schema({
+  dateTime: {
+    type: Date,
+    required: false
+  },
+  authorName: {
+    type: String,
+    required: false
+  },
+  reply: {
+    type: String,
+    required: false
+  },
+  commentReplingId: {
+    type: mongoose.Schema.Types.ObjectId,
+    'ref': 'comment',
+    required: false
+  }
+});
+
 const commentSchema = new mongoose.Schema({
-    commentId: {
-      type: String,
-      required: true,
-      unique: true
-    },
     dateTime: {
       type: Date,
       required: true
@@ -18,8 +34,12 @@ const commentSchema = new mongoose.Schema({
       type: String,
       required: true
     },
-    commentsArray: {
-      type: [{ type: Object, required: false }],
+    authorReply: { 
+      type: String,
+      required: false
+    },
+    repliesArray: {
+      type: [{ type: replySchema, required: false }],
       default: []
     }
   });

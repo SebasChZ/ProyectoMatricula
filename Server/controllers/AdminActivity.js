@@ -24,13 +24,34 @@ const modifyActivity = async (req, res, next) => {
     }catch(error) {
         res.status(500).json({ message: "Error with modification", error });
     }
+    next();
 }
+
+const getActivities = async (req, res, next) => {
+    try{
+        await SingeltonDAO.getActivities(req, res, next);
+    }catch(error) {
+        res.status(500).json({ message: "Error with consult", error });
+    }
+    next();
+}
+
+const getActivityFromId = async (req, res, next) => {
+    try{
+        await SingeltonDAO.getActivityFromId(req, res, next);
+    }catch(error) {
+        res.status(500).json({ message: "Error with consulting", error });
+    }
+    next();
+}
+
 
 
 const registerComment = async (req, res, next) => {
     try{
         json = req.body;
-        json.dateTime = DateController.converStringToDate(json.dateTime);
+
+        json.dateTime = DateController.converStringToDate(json.comment.dateTime);
 
         await SingeltonDAO.registerComment(req, res, next);
     } catch(error) {
@@ -62,4 +83,4 @@ const activateActivity = async (req, res, next) => {
 
 
 
-module.exports = {createActivity, modifyActivity, registerComment, replyComment, activateActivity};
+module.exports = {createActivity, modifyActivity, registerComment, replyComment, activateActivity, getActivities, getActivityFromId};
