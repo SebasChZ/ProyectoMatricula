@@ -7,5 +7,8 @@ router.route('/auth')
     .post(adminUserControllers.loginUser);
 router.route('/register')
     .post(adminUserControllers.registerUser)
+
+router.route('/updatePassword')
+    .post(adminUserControllers.updatePassword);
     
 module.exports = router;

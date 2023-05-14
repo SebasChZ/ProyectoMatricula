@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema({
+    commentId: {
+      type: String,
+      required: true,
+      unique: true
+    },
     dateTime: {
       type: Date,
       required: true
@@ -19,7 +24,6 @@ const commentSchema = new mongoose.Schema({
     }
   });
 
-  
 const activitySchema = new mongoose.Schema({
 
   name: {
@@ -51,7 +55,7 @@ const activitySchema = new mongoose.Schema({
     required: true
   },
   status: {
-    type: String,
+    type: Number,
     required: true,
     default: 0 // 0 pendiente, 1 notificada, 2 cancellada, 3 realizada
   },
