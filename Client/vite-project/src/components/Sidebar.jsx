@@ -1,6 +1,6 @@
 import logoTec from "../img/logoTECGray.svg";
 import { SidebarContent } from "./SidebarContent";
-import { useContext } from "react";
+import { Link } from "react-router-dom";
 
 export function Sidebar() {
   return (
@@ -11,9 +11,9 @@ export function Sidebar() {
         aria-label="Sidebar"
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-          <a href="/home" className="flex justify-center  pl-2.5 mb-5">
+          <Link to="/home-switch" className="flex justify-center  pl-2.5 mb-5">
             <img src={logoTec} alt="Tec Logo" />
-          </a>
+          </Link>
           <ul className="space-y-2 font-medium">
             <SidebarContent />
           </ul>
