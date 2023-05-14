@@ -51,7 +51,7 @@ const activitySchema = new mongoose.Schema({
     required: true
   },
   activityType: {
-    type: Object,
+    type: String,
     required: true
   },
   week: {
@@ -66,24 +66,58 @@ const activitySchema = new mongoose.Schema({
     type: [String],
     default: []
   },
-
+  daysBeforeNotification: {
+    type: Number,
+    required: true
+  },
+  remaindersCount: {
+    type: Number,
+    required: true
+  },
+  remainders: {
+    type: [Date],
+    required: false,
+    default: []
+  },
+  remote:{
+    type: Boolean,
+    required: true
+  },
   sessionLink: {
-    type: String
+    type: String,
+    required: false,
+    default: ""
   },
   poster: {
-    type: Object,
+    type: String,
     required: true
   },
   status: {
     type: Number,
     required: true,
-    default: 0 // 0 pendiente, 1 notificada, 2 cancellada, 3 realizada
+    default: 0 // 0 Planeada, 1 Notificada, 2 Cancelada, 3 Realizada
   },
   commentsArray: {
     type: [{ type: commentSchema, required: false }],
     required: false,
     default: []
-  }
+  },
+  //Estos dos campos son los que se usan para la evidencia y las observaciones, ambas dependen del status 
+  // La evidencia 3: Status realizada
+  //Es tipo objeto porque se puede subir mas de un archivo o más o lo que le de la gana ahí abría que modifcarlo según se requiera
+  evidence: {
+    type: Object,
+    required: false,
+    default: {}
+  },
+  //Las observaciones es cuando se cancela una actividad 2: Status cancelada
+  //Es tipo objeto porque se tiene que subir un comentario, y la fecha de cancelación
+  //observaciones ya está hecho
+  observations: {
+    type: {comment: String, date: Date, _id:false},
+    required: false,
+    default: {}
+  },
 }, { collection: 'activity' });
 
   

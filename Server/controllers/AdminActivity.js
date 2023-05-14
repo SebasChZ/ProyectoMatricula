@@ -15,6 +15,7 @@ const createActivity = async (req, res, next) => {
     next();
 }
 
+
 const modifyActivity = async (req, res, next) => {
     try{
         json = req.body;
@@ -40,7 +41,7 @@ const getActivityFromId = async (req, res, next) => {
     try{
         await SingeltonDAO.getActivityFromId(req, res, next);
     }catch(error) {
-        res.status(500).json({ message: "Error with consulting", error });
+        res.status(500).json({ message: "Error with consult", error });
     }
     next();
 }
@@ -55,7 +56,7 @@ const registerComment = async (req, res, next) => {
 
         await SingeltonDAO.registerComment(req, res, next);
     } catch(error) {
-        res.status(500).json({ message: "Error creating an Activity", error });
+        res.status(500).json({ message: "Error comming an Activity", error });
     }
     next();
 }
@@ -67,20 +68,28 @@ const replyComment = async (req, res, next) => {
 
         await SingeltonDAO.replyComment(req, res, next);
     } catch(error) {
-        res.status(500).json({ message: "Error creating an Activity", error });
+        res.status(500).json({ message: "Error repling the comment an Activity", error });
     }
     next();
 }
 
-const activateActivity = async (req, res, next) => {
+const publishActivity = async (req, res, next) => {
     try{
-        await SingeltonDAO.activateActivity(req, res, next);
+        await SingeltonDAO.publishActivity(req, res, next);
     }catch(error) {
-        res.status(500).json({ message: "Error creating an Activity", error });
+        res.status(500).json({ message: "Error publishing an Activity", error });
+    }
+}
+
+const cancelActivity = async (req, res, next) => {
+    try{
+        await SingeltonDAO.cancelActivity(req, res, next);
+    }catch(error) {
+        res.status(500).json({ message: "Error canceling an Activity", error });
     }
 }
 
 
 
 
-module.exports = {createActivity, modifyActivity, registerComment, replyComment, activateActivity, getActivities, getActivityFromId};
+module.exports = {createActivity, modifyActivity, registerComment, replyComment, publishActivity, getActivities, getActivityFromId, cancelActivity};

@@ -11,6 +11,17 @@ router.route('/')
 router.route('/id/:id')
     .get(adminActivity.getActivityFromId)
 
+//publish activity
+router.route('/publish')
+    .put(adminActivity.publishActivity)
+
+
+//cancel activity
+router.route('/cancel')
+    .put(adminActivity.cancelActivity)
+
+
+
 //comment routes
 router.route('/comment')
     .post(adminActivity.registerComment)

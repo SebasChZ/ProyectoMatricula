@@ -416,7 +416,21 @@ class SingletonDAO {
     // get all professor
     async getAllProfessor(req, res, next) {
         try {
-            const professorsFound = await Professor.find({}).exec();
+            const professorsFound = await Professor.aggregate([
+                {
+                    $lookup: {
+                        from: "branch",
+                        localField: "branch",
+                        foreignField: "code",
+                        as: "branch"
+                    }
+                },
+                {
+                    $set: {
+                        "branch": { $arrayElemAt: ["$branch.name", 0] }
+                    }
+                }
+            ]).exec();
             if (!professorsFound) {
                 return res.status(400).json({ message: 'This code dont exits ' });
 
@@ -434,12 +448,20 @@ class SingletonDAO {
     }
 
     // modify professor
-    async getProfessorByID(req, res, next) {
+    async getProfessorById(req, res, next) {
         try {
 
             //check for find the user usernames in the db
-            const jsonProfessor = req.body;
-            const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
+            const id = req.params.id;
+            const professorFound = await Professor.findOne({ code: id }).exec();
+            
+            //print the professor
+            console.log(professorFound);
+
+            
+            //agregate the branch
+            const branchFound = await Branch.findOne({ code: professorFound.branch }).exec();
+            professorFound.branch = branchFound.name;
             if (!professorFound) {
                 return res.status(400).json({ message: 'This code dont exits ' });
 
@@ -875,11 +897,15 @@ class SingletonDAO {
     async registerActivity(req, res, next) {
         try {
             const jsonActivity = req.body;
+            
             await Activity.create({
                 "name": jsonActivity.name, "activityType": jsonActivity.activityType, "week": jsonActivity.week, "dateTime": jsonActivity.dateTime,
-                "responsibleTeachers": jsonActivity.responsibleTeachers, "sessionLink": jsonActivity.sessionLink, "poster": jsonActivity.poster,
-                "status": jsonActivity.status, "commentsArray": jsonActivity.commentsArray
-            });
+                "responsibleTeachers": jsonActivity.responsibleTeachers, "daysBeforeNotification": jsonActivity.daysBeforeNotification, "remaindersCount": jsonActivity.remaindersCount,
+                "remainders": jsonActivity.remainders, "remote": jsonActivity.remote, "sessionLink": jsonActivity.sessionLink, "poster": jsonActivity.poster,
+                //"commentsArray": jsonActivity.commentsArray, "evidence": jsonActivity.evidence, "observations": jsonActivity.observations
+              });
+              
+              
             res.status(200).json({ state: true, message: 'The Activity has been register perfectly' });
         } catch (e) {
             res.status(500).json({ message: `Server error: ${e}` });
@@ -984,11 +1010,12 @@ class SingletonDAO {
         next();
 
     }
-
-    async activateActivity (req, res, next) {
+    //publish the activity
+    async publishActivity (req, res, next) {
         try{
 
             const activity = req.body;
+            
             const activityFound = await Activity.findOne({ _id: activity.activityId });
 
             if (!activityFound) {
@@ -996,6 +1023,25 @@ class SingletonDAO {
             }
 
             await Activity.updateOne({_id: activity.activityId},{  $set: { status: 1 } });
+            res.status(200).json({ state: true, message: 'The Activity has been publish perfectly' });
+        }catch (error) { 
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
+
+    //publish the activity
+    async cancelActivity (req, res, next) {
+        try{
+
+            const activity = req.body;            
+            const activityFound = await Activity.findOne({ _id: activity.activityId });
+            if (!activityFound) {
+                return res.status(400).json({ message: 'This activity dont exits ' });
+            }
+            let date = new Date();
+            
+            await Activity.updateOne({_id: activity.activityId},{  $set: { status: 2, observations: { comment: activity.observation, date: date} } });
+            res.status(200).json({ state: true, message: 'The Activity has been cancel' });
         }catch (error) { 
             res.status(500).json({ message: `Server error: ${error}` });
         }
@@ -1004,38 +1050,30 @@ class SingletonDAO {
     async modifyActivity (req, res, next) {
 
         try{
-            const activity = req.body;
+            const jsonActivity = req.body;
 
-            const activityFound = await Activity.findOne({ _id: activity.activityId });
+            const activityFound = await Activity.findOne({ _id: jsonActivity.activityId });
 
             if (!activityFound) {
                 return res.status(400).json({ message: 'This activity dont exits ' });
             }
-
-            await Activity.updateOne({_id: activity.activityId},{  $set: { name: activity.name, activityType: activity.activityType, week: activity.week, dateTime: activity.dateTime,
-                responsibleTeachers: activity.responsibleTeachers, sessionLink: activity.sessionLink, poster: activity.poster, status: activity.status } });
-
+            await Activity.updateOne({ _id: jsonActivity.activityId },
+                {
+                  $set: {
+                    name: jsonActivity.name, "activityType": jsonActivity.activityType, "week": jsonActivity.week, "dateTime": jsonActivity.dateTime,
+                    "responsibleTeachers": jsonActivity.responsibleTeachers, "daysBeforeNotification": jsonActivity.daysBeforeNotification, "remaindersCount": jsonActivity.remaindersCount,
+                    "remainders": jsonActivity.remainders, "remote": jsonActivity.remote, "sessionLink": jsonActivity.sessionLink, "poster": jsonActivity.poster,
+                    "status": jsonActivity.status, "commentsArray": jsonActivity.commentsArray, "evidence": jsonActivity.evidence, "observations": jsonActivity.observations
+                  }
+                }
+              );
             res.status(200).json({ state: true, message: 'The Activity has been modify perfectly' });
 
         }catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         }
+        next();
 
-    }
-
-    async nextActivity (req, res, next) {
-        
-        const today = new Date();
-        today.setHours(0,0,0,0);
-
-        try{
-            const nextActivity = await Activity.findOne({ dateTime: { $gte: today } }).sort({ dateTime: 1 }).limit(1);            
-            
-            res.status(200).json({ state: true, message: 'The next Activity has been found perfectly', nextActivity: nextActivity });
-
-        }catch (error) {
-            res.status(500).json({ message: `Server error: ${error}` });
-        }
     }
 
 }

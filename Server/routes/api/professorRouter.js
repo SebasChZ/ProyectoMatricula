@@ -9,7 +9,7 @@ router.route('/')
     
     
 
-router.route('/:id')
+router.route('/id/:id')
     .get(adminProfessorControllers.getProfessorById)
 
 
