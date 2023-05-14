@@ -98,9 +98,10 @@ const activitySchema = new mongoose.Schema({
     default: 0 // 0 Planeada, 1 Notificada, 2 Cancelada, 3 Realizada
   },
   commentsArray: {
-    type: [{ type: commentSchema, required: false }],
+    type: [{ type: commentSchema, required: false}],
     required: false,
-    default: []
+    default: [],
+    _id: false
   },
   //Estos dos campos son los que se usan para la evidencia y las observaciones, ambas dependen del status 
   // La evidencia 3: Status realizada

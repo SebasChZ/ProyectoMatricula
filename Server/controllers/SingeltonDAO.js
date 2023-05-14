@@ -707,23 +707,6 @@ class SingletonDAO {
                         studentCount: { $size: "$studentsArray" }
                     }
                 },
-                
-                {
-                    $lookup:
-                    {
-                        from: "activitiesPlan",
-                        localField: "activitiesPlanId",
-                        foreignField: "_id",
-                        as: "activityPLan"
-                    }
-                }
-                ,
-                {
-                    $set: {
-                        activityPLan: { $arrayElemAt: ["$activityPLan", 0] }
-                        
-                    }
-                },
             ])
 
             //const branchName = await Branch.findOne({code: teamsFound.branch}).exec();
@@ -738,7 +721,8 @@ class SingletonDAO {
             }
 
              //asign the activity plan to the team
-            teamFound.ActivitiesPlan = await SingletonDAO.getInstance().getActivitiesPlanFromIdParam(teamFound.activitiesPlanId)
+            teamFound.activityPLan = await SingletonDAO.getInstance().getActivitiesPlanInstaceForTeam(teamFound.activitiesPlanId);
+            teamFound.countDataActivity = await SingletonDAO.getInstance().getActivitiesCompletedForTeam(teamFound.activityPLan);
             
             res.status(200).json({ state: true, teamsFound: teamFound });
         } catch (error) {
@@ -746,6 +730,63 @@ class SingletonDAO {
         }
         next();
     };
+
+    async getActivitiesPlanInstaceForTeam(activitiesPlanId) {
+
+        try {
+            const activitiesPlanFound = await ActivitiesPlan.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "activity",
+                        localField: "activitiesArray",
+                        foreignField: "_id",
+                        as: "activitiesArray"
+                    }
+                },
+                {
+                    $match: {
+                        _id: new mongoose.Types.ObjectId( activitiesPlanId)
+                    }
+                }
+            ]).exec();            
+            return activitiesPlanFound[0];
+        } catch (error) {
+            //console log of the error
+            console.log(error);
+        }
+    }
+
+    //funtion to count the number of activites completed for a team
+    async getActivitiesCompletedForTeam(teamActivyPlan) {
+        try {
+            
+            //get the activities completed for the team
+            let activitiesCompleted = 0;
+            let activitiesPlanned = 0;
+            let activitiesPublish = 0;
+            let activitiesCanceled = 0;
+
+            for (let i = 0; i < teamActivyPlan.activitiesArray.length; i++) {
+                if(teamActivyPlan.activitiesArray[i].status == 0){
+                    activitiesPlanned++;
+                }else if(teamActivyPlan.activitiesArray[i].status == 1){
+                    activitiesPublish++;
+                }else if(teamActivyPlan.activitiesArray[i].status == 2){
+                    activitiesCanceled++;
+                }else if(teamActivyPlan.activitiesArray[i].status == 3){
+                    activitiesCompleted++;
+                }                
+            }
+
+            return {planned: activitiesPlanned, publish: activitiesPublish, canceled: activitiesCanceled, completed: activitiesCompleted};
+            
+        } catch (error) {
+            //console log of the error
+            console.log(error);
+        }
+    };
+
 
     //-------------------------------------------------------------------------------------
     //                      ActivitiesPlan Admin Functions
@@ -765,9 +806,8 @@ class SingletonDAO {
                         as: "activitiesArray"
                     }
                 }
-                
-
             ]).exec();
+
             res.status(200).json({ state: true, activitiesPlanFound: activitiesPlanFound });
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
@@ -787,20 +827,18 @@ class SingletonDAO {
                         foreignField: "_id",
                         as: "activitiesArray"
                     }
+                },
+                {
+                    $match: {
+                        _id: new mongoose.Types.ObjectId( planId)
+                    }
                 }
                 
 
             ]).exec();
-            //for to get the plan from the id
-            let activitiesPlanFound = null;
-            for (let i = 0; i < activitiesPlan.length; i++) {
-                if(activitiesPlan[i]._id.toString() == planId){
-                    activitiesPlanFound = activitiesPlan[i];
-                    break;
-                }
-            }
+           
 
-            res.status(200).json({ state: true, activitiesPlanFound: activitiesPlanFound });
+            res.status(200).json({ state: true, activitiesPlanFound: activitiesPlan[0] });
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         }
@@ -890,6 +928,9 @@ class SingletonDAO {
         next();
     }
 
+
+
+
     //-------------------------------------------------------------------------------------
     //                      Activity Admin Functions
     //-------------------------------------------------------------------------------------
@@ -897,7 +938,6 @@ class SingletonDAO {
     async registerActivity(req, res, next) {
         try {
             const jsonActivity = req.body;
-            
             await Activity.create({
                 "name": jsonActivity.name, "activityType": jsonActivity.activityType, "week": jsonActivity.week, "dateTime": jsonActivity.dateTime,
                 "responsibleTeachers": jsonActivity.responsibleTeachers, "daysBeforeNotification": jsonActivity.daysBeforeNotification, "remaindersCount": jsonActivity.remaindersCount,
