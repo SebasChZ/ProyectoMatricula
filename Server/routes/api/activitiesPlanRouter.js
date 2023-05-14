@@ -7,13 +7,11 @@ router.route('/')
         console.log('newUser');
     })
     .post(adminActivitiesPlan.createActivitiesPlan)
+router.route('/activity')
     .put(adminActivitiesPlan.addActivitytoPlan)
+router.route('/nextActivity')
+    .get(adminActivitiesPlan.getNextActivity)
 
-router.route('/activities')
-    .get((req, res) => {
-        console.log('newUser');
-    })
-    .post(adminActivitiesPlan.createActivity);
 
 
 module.exports = router;
