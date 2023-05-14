@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import PlaceIcon from '@mui/icons-material/Place';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 
 export const ProfessorCard = () => {
 
@@ -46,17 +48,14 @@ export const ProfessorCard = () => {
                 </table>
                 <div class="ml-4 flex items-end space-x-20">
                 <div class="flex flex-col items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                  </svg>
+
+                    <PlaceIcon className="text-emerald-600" sx={{  fontSize: 40 }}  />
+
                   <label class="block  tracking-wide text-gray-700 text-xs font-bold mt-2" for="grid-branch">Cartago</label>
                 </div>
 
                 <div class="flex flex-col items-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-8 w-8">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                  </svg>
+                  <BusinessCenterIcon className="text-emerald-600" sx={{  fontSize: 40 }} />
                   <label class="block tracking-wide text-gray-700 text-xs font-bold mt-2" for="grid-branch">Ing.Computación</label>
                 </div>
               </div>
