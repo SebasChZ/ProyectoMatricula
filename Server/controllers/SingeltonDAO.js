@@ -704,9 +704,6 @@ class SingletonDAO {
                 },
             ])
 
-           
-
-
             //const branchName = await Branch.findOne({code: teamsFound.branch}).exec();
             //get the team from with a for
             let teamFound = null;
@@ -908,7 +905,6 @@ class SingletonDAO {
                     activitiesPlan = activityPlans[i];
                 }
             }
-
             //get the now date
             let now = new Date();
             //get the next activity
@@ -922,9 +918,6 @@ class SingletonDAO {
                     break;
                 }
             }
-
-            
-
             //console.log(activitiesPlan);
             console.log(nextActivity);
 
