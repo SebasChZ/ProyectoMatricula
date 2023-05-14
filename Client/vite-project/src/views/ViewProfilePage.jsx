@@ -1,3 +1,5 @@
+import {Link} from "react-router-dom";
+
 export function ViewProfilePage(){
 
     return (
@@ -40,6 +42,19 @@ export function ViewProfilePage(){
                         </table>
                     </div>
                 </div>
+
+                <div className="max-w-full basis-3 h-full mt-6">
+                    <div className="flex justify-end">
+                        <Link to = "/editProfile"
+                        type="submit"
+                        className="text-white bg-primary-1000 hover:bg-primary-1000 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-00747F dark:hover:bg-primary-1000 dark:focus:ring-primary-800"
+                        >
+                        Editar
+                        </Link>
+                    </div>
+                </div>
+
+
             </div>
             </form>
         </div>
