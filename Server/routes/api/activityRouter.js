@@ -27,4 +27,8 @@ router.route('/comment')
     .post(adminActivity.registerComment)
     .put(adminActivity.replyComment)
 
+//done activity
+router.route('/done')
+    .put(adminActivity.doneActivity)
+
 module.exports = router;
