@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "../api/axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { ProfessorCard } from "../components/ProfessorCard";
 
 const LOGIN_URL = "/professor";
 
@@ -104,7 +105,7 @@ export function RegisterProfessorPage() {
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-firstName"
                 >
-                  firstName
+                  Nombre
                 </label>
                 <input
                   onChange={(e) => {
@@ -161,7 +162,7 @@ export function RegisterProfessorPage() {
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-officePhoneNumber"
                 >
-                  Número de officePhoneNumber
+                  Número de oficina
                 </label>
                 <input
                   onChange={(e) => {
@@ -197,7 +198,7 @@ export function RegisterProfessorPage() {
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-branch"
                 >
-                  branch
+                  Sede
                 </label>
                 <div className="relative">
                   <select
@@ -234,7 +235,7 @@ export function RegisterProfessorPage() {
                   className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   htmlFor="grid-descripcion"
                 >
-                  Email
+                  Correo
                 </label>
                 <input
                   onChange={(e) => {
@@ -303,7 +304,7 @@ export function RegisterProfessorPage() {
                       </div>
                       <div class="relative">
                         <span class="block relative text-blue-500 group-hover:text-blue-500">
-                          Upload a file
+                          Subir archivo
                         </span>
                         <span class="mt-0.5 block text-sm text-gray-500 dark:text-gray-400">
                           Max 2 MB
@@ -334,57 +335,20 @@ export function RegisterProfessorPage() {
       </div>
 
       <div className="bg-gray-100 flex justify-around py-5 ">
-        <div class="flex items-center w-full justify-center">
-          <div class="max-w-xs">
-            <div class="bg-white shadow-xl rounded-lg py-3">
-              <div class="photo-wrapper px-2">
-                <img
-                  class="w-32 h-32 rounded-full mx-auto"
-                  src="https://www.gravatar.com/avatar/2acfb745ecf9d4dccb3364752d17f65f?s=260&d=mp"
-                  alt="John Doe"
-                />
-              </div>
-              <div class="px-2">
-                <h3 class="text-center text-xl text-gray-900 font-light">
-                  Manitor Matinez
-                </h3>
-                <div class="text-center text-gray-400 text-xs font-semibold">
-                  <p>Cartago</p>
-                </div>
-
-                <table class="text-xs my-3">
-                  <tbody>
-                    <tr>
-                      <td class="px-2 py-2 text-gray-500 font-semibold">
-                        Address
-                      </td>
-                      <td class="px-2 py-2">Chatakpur-3, Dhangadhi Kailali</td>
-                    </tr>
-                    <tr>
-                      <td class="px-2 py-2 text-gray-500 font-semibold">
-                        Phone
-                      </td>
-                      <td class="px-2 py-2">+977 9955221114</td>
-                    </tr>
-                    <tr>
-                      <td class="px-2 py-2 text-gray-500 font-semibold">
-                        Email
-                      </td>
-                      <td class="px-2 py-2">john@exmaple.com</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                <div class="text-center my-3">
-                  <a
-                    class="text-xs text-indigo-500 italic hover:underline hover:text-indigo-600 font-medium"
-                    href="#"
-                  >
-                    View Profile
-                  </a>
-                </div>
-              </div>
-            </div>
+        <div class="flex items-center w-full justify-start overflow-auto">
+          <div class="flex justify-start max-w-xs ">
+            <ProfessorCard />
+            <ProfessorCard />
+            <ProfessorCard />
+            <ProfessorCard />
+            <ProfessorCard />
+            <ProfessorCard />
+            <ProfessorCard />
+            <ProfessorCard />
+            <ProfessorCard />
+            <ProfessorCard />
+            <ProfessorCard />
+            <ProfessorCard />
           </div>
         </div>
       </div>

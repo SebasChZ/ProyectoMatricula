@@ -12,8 +12,10 @@ import { ViewStudentsPage } from "./views/ViewStudentsPage";
 import { PlansViewPage } from "./views/PlansViewPage";
 import { VerPlanPage } from "./views/VerPlanPage";
 import { RegisterProfessorPage } from "./views/RegisterProfessorPage";
+import { ViewProfilePage } from "./views/ViewProfilePage";
 import { ModifyPlanTrabajoPage } from "./views/ModifyPlanTrabajoPage";
 import { ViewActivityPage } from "./views/ViewActivityPage";
+
 
 const ROLES = {
   Professor: 1597,
@@ -76,13 +78,14 @@ export default function App() {
           }
         >
           <Route path="/home-assistant" element={<AssistantHomePage />} />
+          <Route path="/viewProfile" element={<ViewProfilePage />} />
         </Route>
 
         {/* AssistantCA routes */}
         <Route element={<RequireAuth allowedRoles={[ROLES.AssistantCA]} />}>
           <Route
             path="/registrar-profesor"
-            element={<RegisterProfessorPage />}
+            element={<RegisterProfessorPage/>}
           />
         </Route>
 
