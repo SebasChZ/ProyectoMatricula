@@ -15,6 +15,7 @@ import { RegisterProfessorPage } from "./views/RegisterProfessorPage";
 import { ViewProfilePage } from "./views/ViewProfilePage";
 import { ModifyPlanTrabajoPage } from "./views/ModifyPlanTrabajoPage";
 import { ViewActivityPage } from "./views/ViewActivityPage";
+import { EditProfessorPage } from "./views/EditProfessorPage";
 
 
 const ROLES = {
@@ -79,6 +80,7 @@ export default function App() {
         >
           <Route path="/home-assistant" element={<AssistantHomePage />} />
           <Route path="/viewProfile" element={<ViewProfilePage />} />
+          <Route path="/editProfile" element={<EditProfessorPage />} />
         </Route>
 
         {/* AssistantCA routes */}
