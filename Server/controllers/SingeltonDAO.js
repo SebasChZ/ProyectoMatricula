@@ -675,7 +675,51 @@ class SingletonDAO {
 
         try {
 
-            const activitiesPlanFound = await ActivitiesPlan.find({}).exec();
+            const activitiesPlanFound = await ActivitiesPlan.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "activity",
+                        localField: "activitiesArray",
+                        foreignField: "_id",
+                        as: "activitiesArray"
+                    }
+                }
+                
+
+            ]).exec();
+            res.status(200).json({ state: true, activitiesPlanFound: activitiesPlanFound });
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
+
+    async getActivitiesPlanFromId(req, res, next) {
+
+        try {
+            const planId= req.params.id;
+            const activitiesPlan = await ActivitiesPlan.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "activity",
+                        localField: "activitiesArray",
+                        foreignField: "_id",
+                        as: "activitiesArray"
+                    }
+                }
+                
+
+            ]).exec();
+            //for to get the plan from the id
+            let activitiesPlanFound = null;
+            for (let i = 0; i < activitiesPlan.length; i++) {
+                if(activitiesPlan[i]._id.toString() == planId){
+                    activitiesPlanFound = activitiesPlan[i];
+                    break;
+                }
+            }
+
             res.status(200).json({ state: true, activitiesPlanFound: activitiesPlanFound });
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });

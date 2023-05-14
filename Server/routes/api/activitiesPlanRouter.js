@@ -3,10 +3,10 @@ const router = express.Router();
 const adminActivitiesPlan = require('../../controllers/AdminActivitiesPlan');
 
 router.route('/')
-    .get((req, res) => {
-        console.log('newUser');
-    })
+    .get(adminActivitiesPlan.getActivitiesPlan)
     .post(adminActivitiesPlan.createActivitiesPlan)
+router.route('/id/:id')
+    .get(adminActivitiesPlan.getActivitiesPlanFromId)
 router.route('/activity')
     .put(adminActivitiesPlan.addActivitytoPlan)
 router.route('/nextActivity')

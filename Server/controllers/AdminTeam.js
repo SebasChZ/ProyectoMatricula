@@ -50,7 +50,6 @@ const getTeams = async (req, res, next) => {
 
 const getTeamFromId = async (req, res, next) => {
     try{    
-        console.log("getTeamFromId");
         await SingeltonDAO.getTeamFromId(req, res, next);
     } catch(error) {
         res.status(500).json({ message: "Error getting team", error });
