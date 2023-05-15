@@ -9,6 +9,7 @@ const Team = require('../models/Team.js');
 const ActivitiesPlan = require('../models/ActivitiesPlan.js');
 const Activity = require('../models/Activity.js');
 const Branch = require('../models/Branch.js');
+const ActivityType = require('../models/activityType');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const erorrHandler = require('../middleware/erorrHandler');
@@ -241,14 +242,14 @@ class SingletonDAO {
         }
 
     }
-    async generateExcel (req, res, next) {
+    async generateExcel(req, res, next) {
         try {
             const students = await Student.find({});
             if (students.length > 0) {
 
 
                 let workbook = xlsx.utils.book_new();
-                
+
                 // Group students by campus
                 const campusGroups = {};
                 students.forEach(student => {
@@ -259,11 +260,11 @@ class SingletonDAO {
                     console.log(student);
                     campusGroups[campus].push(student);
                 });
-                
-            
+
+
                 for (const campus in campusGroups) {
                     const students = campusGroups[campus];
-                    
+
                     // Convert each student into a simple object
                     const data = students.map(student => {
                         return {
@@ -276,17 +277,17 @@ class SingletonDAO {
                             campus: student.academicCenter,
                         };
                     });
-                    
+
                     const worksheet = xlsx.utils.json_to_sheet(data);
                     xlsx.utils.book_append_sheet(workbook, worksheet, campus);
                 }
 
                 //Write workbook to file
                 xlsx.writeFile(workbook, 'Students.xlsx');
-                
+
                 res.status(200).json({ message: "Excel file generated successfully" });
-                
-                
+
+
             } else {
                 res.status(400).json({ msg: 'No students found' });
             }
@@ -454,11 +455,11 @@ class SingletonDAO {
             //check for find the user usernames in the db
             const id = req.params.id;
             const professorFound = await Professor.findOne({ code: id }).exec();
-            
+
             //print the professor
             console.log(professorFound);
 
-            
+
             //agregate the branch
             const branchFound = await Branch.findOne({ code: professorFound.branch }).exec();
             professorFound.branch = branchFound.name;
@@ -623,7 +624,7 @@ class SingletonDAO {
                 {
                     $set: {
                         branch: { $arrayElemAt: ["$branch.name", 0] }
-                        
+
                     }
                 },
                 {
@@ -642,7 +643,7 @@ class SingletonDAO {
                         studentCount: { $size: "$studentsArray" }
                     }
                 },
-                
+
                 {
                     $lookup:
                     {
@@ -656,7 +657,7 @@ class SingletonDAO {
                 {
                     $set: {
                         activityPLan: { $arrayElemAt: ["$activityPLan", 0] }
-                        
+
                     }
                 },
             ])
@@ -672,7 +673,7 @@ class SingletonDAO {
 
     async getTeamFromId(req, res, next) {
         try {
-            const teamId= req.params.id;
+            const teamId = req.params.id;
             //print fo team id
             console.log(teamId);
             const teamsFound = await Team.aggregate([
@@ -688,7 +689,7 @@ class SingletonDAO {
                 {
                     $set: {
                         branch: { $arrayElemAt: ["$branch.name", 0] }
-                        
+
                     }
                 },
                 {
@@ -707,45 +708,86 @@ class SingletonDAO {
                         studentCount: { $size: "$studentsArray" }
                     }
                 },
-                
-                {
-                    $lookup:
-                    {
-                        from: "activitiesPlan",
-                        localField: "activitiesPlanId",
-                        foreignField: "_id",
-                        as: "activityPLan"
-                    }
-                }
-                ,
-                {
-                    $set: {
-                        activityPLan: { $arrayElemAt: ["$activityPLan", 0] }
-                        
-                    }
-                },
             ])
 
             //const branchName = await Branch.findOne({code: teamsFound.branch}).exec();
             //get the team from with a for
             let teamFound = null;
             for (let i = 0; i < teamsFound.length; i++) {
-                
-                if(teamsFound[i]._id.toString() == teamId){
+
+                if (teamsFound[i]._id.toString() == teamId) {
                     teamFound = teamsFound[i];
                     break;
                 }
             }
 
-             //asign the activity plan to the team
-            teamFound.ActivitiesPlan = await SingletonDAO.getInstance().getActivitiesPlanFromIdParam(teamFound.activitiesPlanId)
-            
+            //asign the activity plan to the team
+            teamFound.activityPLan = await SingletonDAO.getInstance().getActivitiesPlanInstaceForTeam(teamFound.activitiesPlanId);
+            teamFound.countDataActivity = await SingletonDAO.getInstance().getActivitiesCompletedForTeam(teamFound.activityPLan);
+
             res.status(200).json({ state: true, teamsFound: teamFound });
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         }
         next();
     };
+
+    async getActivitiesPlanInstaceForTeam(activitiesPlanId) {
+
+        try {
+            const activitiesPlanFound = await ActivitiesPlan.aggregate([
+                {
+                    $lookup:
+                    {
+                        from: "activity",
+                        localField: "activitiesArray",
+                        foreignField: "_id",
+                        as: "activitiesArray"
+                    }
+                },
+                {
+                    $match: {
+                        _id: new mongoose.Types.ObjectId(activitiesPlanId)
+                    }
+                }
+            ]).exec();
+            return activitiesPlanFound[0];
+        } catch (error) {
+            //console log of the error
+            console.log(error);
+        }
+    }
+
+    //funtion to count the number of activites completed for a team
+    async getActivitiesCompletedForTeam(teamActivyPlan) {
+        try {
+
+            //get the activities completed for the team
+            let activitiesCompleted = 0;
+            let activitiesPlanned = 0;
+            let activitiesPublish = 0;
+            let activitiesCanceled = 0;
+
+            for (let i = 0; i < teamActivyPlan.activitiesArray.length; i++) {
+                if (teamActivyPlan.activitiesArray[i].status == 0) {
+                    activitiesPlanned++;
+                } else if (teamActivyPlan.activitiesArray[i].status == 1) {
+                    activitiesPublish++;
+                } else if (teamActivyPlan.activitiesArray[i].status == 2) {
+                    activitiesCanceled++;
+                } else if (teamActivyPlan.activitiesArray[i].status == 3) {
+                    activitiesCompleted++;
+                }
+            }
+
+            return { planned: activitiesPlanned, publish: activitiesPublish, canceled: activitiesCanceled, completed: activitiesCompleted };
+
+        } catch (error) {
+            //console log of the error
+            console.log(error);
+        }
+    };
+
 
     //-------------------------------------------------------------------------------------
     //                      ActivitiesPlan Admin Functions
@@ -765,9 +807,8 @@ class SingletonDAO {
                         as: "activitiesArray"
                     }
                 }
-                
-
             ]).exec();
+
             res.status(200).json({ state: true, activitiesPlanFound: activitiesPlanFound });
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
@@ -777,7 +818,7 @@ class SingletonDAO {
     async getActivitiesPlanFromId(req, res, next) {
 
         try {
-            const planId= req.params.id;
+            const planId = req.params.id;
             const activitiesPlan = await ActivitiesPlan.aggregate([
                 {
                     $lookup:
@@ -787,20 +828,18 @@ class SingletonDAO {
                         foreignField: "_id",
                         as: "activitiesArray"
                     }
+                },
+                {
+                    $match: {
+                        _id: new mongoose.Types.ObjectId(planId)
+                    }
                 }
-                
+
 
             ]).exec();
-            //for to get the plan from the id
-            let activitiesPlanFound = null;
-            for (let i = 0; i < activitiesPlan.length; i++) {
-                if(activitiesPlan[i]._id.toString() == planId){
-                    activitiesPlanFound = activitiesPlan[i];
-                    break;
-                }
-            }
 
-            res.status(200).json({ state: true, activitiesPlanFound: activitiesPlanFound });
+
+            res.status(200).json({ state: true, activitiesPlanFound: activitiesPlan[0] });
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         }
@@ -873,7 +912,7 @@ class SingletonDAO {
             let nextActivity = {}
             for (let i = 0; i < activitiesPlan.activitiesArray.length; i++) {
                 //print the date
-               
+
                 if (activitiesPlan.activitiesArray[i].dateTime > now) {
 
                     nextActivity = activitiesPlan.activitiesArray[i];
@@ -890,6 +929,9 @@ class SingletonDAO {
         next();
     }
 
+
+
+
     //-------------------------------------------------------------------------------------
     //                      Activity Admin Functions
     //-------------------------------------------------------------------------------------
@@ -897,22 +939,21 @@ class SingletonDAO {
     async registerActivity(req, res, next) {
         try {
             const jsonActivity = req.body;
-            
             await Activity.create({
                 "name": jsonActivity.name, "activityType": jsonActivity.activityType, "week": jsonActivity.week, "dateTime": jsonActivity.dateTime,
                 "responsibleTeachers": jsonActivity.responsibleTeachers, "daysBeforeNotification": jsonActivity.daysBeforeNotification, "remaindersCount": jsonActivity.remaindersCount,
                 "remainders": jsonActivity.remainders, "remote": jsonActivity.remote, "sessionLink": jsonActivity.sessionLink, "poster": jsonActivity.poster,
                 //"commentsArray": jsonActivity.commentsArray, "evidence": jsonActivity.evidence, "observations": jsonActivity.observations
-              });
-              
-              
+            });
+
+
             res.status(200).json({ state: true, message: 'The Activity has been register perfectly' });
         } catch (e) {
             res.status(500).json({ message: `Server error: ${e}` });
         }
         next();
     }
-    
+
     //get the activities
     async getActivities(req, res, next) {
         try {
@@ -927,9 +968,9 @@ class SingletonDAO {
     //get the activities from the id
     async getActivityFromId(req, res, next) {
         try {
-            
-            const id= req.params.id;
-            const activities = await Activity.findOne({_id: id}).exec();
+
+            const id = req.params.id;
+            const activities = await Activity.findOne({ _id: id }).exec();
             res.status(200).json({ state: true, activity: activities });
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
@@ -937,18 +978,18 @@ class SingletonDAO {
         next();
     }
 
-    async registerComment (req, res, next) {
+    async registerComment(req, res, next) {
         try {
 
-           let jsonComment = req.body;
-           jsonComment.comment.repliesArray = [];
+            let jsonComment = req.body;
+            jsonComment.comment.repliesArray = [];
             //validate if the activity exists
             const activityFound = await Activity.findOne({ _id: jsonComment.activityId });
             if (!activityFound) {
                 return res.status(400).json({ message: 'This activity dont exits ' });
             }
-             //create the comment
-            await Activity.updateOne( {_id: jsonComment.activityId},{$push: {commentsArray: jsonComment.comment}}).exec(); 
+            //create the comment
+            await Activity.updateOne({ _id: jsonComment.activityId }, { $push: { commentsArray: jsonComment.comment } }).exec();
             res.status(200).json({ state: true, message: 'The Comment has been register perfectly' });
         } catch (e) {
             res.status(500).json({ message: `Server error: ${e}` });
@@ -956,17 +997,17 @@ class SingletonDAO {
         next();
     }
 
-    async replyComment (req, res, next) {
-        
-        try{
+    async replyComment(req, res, next) {
+
+        try {
             const jsonComment = req.body;
-           
+
             //validate if the activity exists
             const activityFound = await Activity.findOne({ _id: jsonComment.activityId });
             if (!activityFound) {
                 return res.status(400).json({ message: 'This activity dont exits ' });
             }
-            
+
             //valide with a for if the comment exists
             let commentFound = false;
             for (let i = 0; i < activityFound.commentsArray.length; i++) {
@@ -982,27 +1023,27 @@ class SingletonDAO {
                         if (activityFound.commentsArray[i].repliesArray[j]._id.toString() == jsonComment.commentRepy) {
                             //create the id of the reply based on the id of the comment
                             commentFound = true;
-                            jsonComment.comment.commentReplingId = new mongoose.Types.ObjectId( jsonComment.commentRepy);
+                            jsonComment.comment.commentReplingId = new mongoose.Types.ObjectId(jsonComment.commentRepy);
                             jsonComment.commentRepy = activityFound.commentsArray[i]._id.toString();
-                            await Activity.updateOne({ _id: jsonComment.activityId, "commentsArray._id": jsonComment.commentRepy }, 
-                            { $push: { "commentsArray.$.repliesArray": jsonComment.comment} }).exec();
+                            await Activity.updateOne({ _id: jsonComment.activityId, "commentsArray._id": jsonComment.commentRepy },
+                                { $push: { "commentsArray.$.repliesArray": jsonComment.comment } }).exec();
                             res.status(200).json({ state: true, message: 'The Comment has been register perfectly' });
-                            break;                          
-                        }           
+                            break;
+                        }
                     }
                 }
                 if (!commentFound) {
                     return res.status(400).json({ message: 'This comment dont exits ' });
                 }
-            }else{
+            } else {
                 //create the id of the reply
                 jsonComment.comment.commentReplingId = new mongoose.Types.ObjectId(jsonComment.commentRepy);
 
                 //reply the comment of the activity
-                await Activity.updateOne({ _id: jsonComment.activityId, "commentsArray._id": jsonComment.commentRepy }, 
-                { $push: { "commentsArray.$.repliesArray": jsonComment.comment} }).exec();
+                await Activity.updateOne({ _id: jsonComment.activityId, "commentsArray._id": jsonComment.commentRepy },
+                    { $push: { "commentsArray.$.repliesArray": jsonComment.comment } }).exec();
                 res.status(200).json({ state: true, message: 'The Comment has been register perfectly' });
-            }  
+            }
 
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
@@ -1011,45 +1052,45 @@ class SingletonDAO {
 
     }
     //publish the activity
-    async publishActivity (req, res, next) {
-        try{
+    async publishActivity(req, res, next) {
+        try {
 
             const activity = req.body;
-            
+
             const activityFound = await Activity.findOne({ _id: activity.activityId });
 
             if (!activityFound) {
                 return res.status(400).json({ message: 'This activity dont exits ' });
             }
 
-            await Activity.updateOne({_id: activity.activityId},{  $set: { status: 1 } });
+            await Activity.updateOne({ _id: activity.activityId }, { $set: { status: 1 } });
             res.status(200).json({ state: true, message: 'The Activity has been publish perfectly' });
-        }catch (error) { 
+        } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         }
     }
 
     //publish the activity
-    async cancelActivity (req, res, next) {
-        try{
+    async cancelActivity(req, res, next) {
+        try {
 
-            const activity = req.body;            
+            const activity = req.body;
             const activityFound = await Activity.findOne({ _id: activity.activityId });
             if (!activityFound) {
                 return res.status(400).json({ message: 'This activity dont exits ' });
             }
             let date = new Date();
-            
-            await Activity.updateOne({_id: activity.activityId},{  $set: { status: 2, observations: { comment: activity.observation, date: date} } });
+
+            await Activity.updateOne({ _id: activity.activityId }, { $set: { status: 2, observations: { comment: activity.observation, date: date } } });
             res.status(200).json({ state: true, message: 'The Activity has been cancel' });
-        }catch (error) { 
+        } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         }
     }
 
-    async modifyActivity (req, res, next) {
+    async modifyActivity(req, res, next) {
 
-        try{
+        try {
             const jsonActivity = req.body;
 
             const activityFound = await Activity.findOne({ _id: jsonActivity.activityId });
@@ -1059,55 +1100,138 @@ class SingletonDAO {
             }
             await Activity.updateOne({ _id: jsonActivity.activityId },
                 {
-                  $set: {
-                    name: jsonActivity.name, "activityType": jsonActivity.activityType, "week": jsonActivity.week, "dateTime": jsonActivity.dateTime,
-                    "responsibleTeachers": jsonActivity.responsibleTeachers, "daysBeforeNotification": jsonActivity.daysBeforeNotification, "remaindersCount": jsonActivity.remaindersCount,
-                    "remainders": jsonActivity.remainders, "remote": jsonActivity.remote, "sessionLink": jsonActivity.sessionLink, "poster": jsonActivity.poster,
-                    "status": jsonActivity.status, "commentsArray": jsonActivity.commentsArray, "evidence": jsonActivity.evidence, "observations": jsonActivity.observations
-                  }
+                    $set: {
+                        name: jsonActivity.name, "activityType": jsonActivity.activityType, "week": jsonActivity.week, "dateTime": jsonActivity.dateTime,
+                        "responsibleTeachers": jsonActivity.responsibleTeachers, "daysBeforeNotification": jsonActivity.daysBeforeNotification, "remaindersCount": jsonActivity.remaindersCount,
+                        "remainders": jsonActivity.remainders, "remote": jsonActivity.remote, "sessionLink": jsonActivity.sessionLink, "poster": jsonActivity.poster,
+                        "status": jsonActivity.status, "commentsArray": jsonActivity.commentsArray, "evidence": jsonActivity.evidence, "observations": jsonActivity.observations
+                    }
                 }
-              );
+            );
             res.status(200).json({ state: true, message: 'The Activity has been modify perfectly' });
 
-        }catch (error) {
+        } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         }
         next();
 
     }
 
-    async doneActivity (req, res, next) {
+    async doneActivity(req, res, next) {
 
-        try{
-
-            console.log("Entra a la funcion");
-
+        try {
             const { activityId, evidence } = req.body;
 
             console.log("activityId: " + activityId + " evidence: " + JSON.stringify(evidence));
 
             const activityFound = await Activity.findOne({ _id: activityId });
+
             if (!activityFound) {
-            return res.status(400).json({ message: 'This activity does not exist' });
+              return res.status(400).json({ message: 'This activity does not exist' });
             }
 
             let date = new Date();
-
             const newEvidence = {
-            dateTime: date,
-            assistImages: evidence[0].assistImages,
-            evidenceImages: evidence[0].evidenceImages,
-            link: evidence[0].link
+              dateTime: date,
+              assistImages: evidence[0].assistImages,
+              evidenceImages: evidence[0].evidenceImages,
+              link: evidence[0].link
             };
 
             await Activity.updateOne({ _id: activityId }, { $set: { status: 3, evidence: newEvidence } });
             res.status(200).json({ state: true, message: 'The Activity is finished' });
 
 
+
         } catch (error) {
             res.status(500).json({ message: `Server error: ${error}` });
         }
 
+    }
+
+    //-----------------------------------------------------//
+    //-------------         Utilities       ---------------//
+    //-----------------------------------------------------//
+
+    //get branches
+    async getBranches(req, res, next) {
+        try {
+            const branches = await Branch.find();
+            res.status(200).json(branches);
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
+
+    //get teams name 
+    async getTeamName(req, res, next) {
+        try {
+            let teams = await Team.find({}, { name: 1, academicYear: 1, branch: 1 });
+
+            //for to get the name of the branch
+            for (let i = 0; i < teams.length; i++) {
+                let branch = await Branch.findOne({ code: teams[i].branch });
+                teams[i].branch = branch.name;
+            }
+
+
+
+            res.status(200).json(teams);
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
+
+    //count students
+    async getCountStudent(req, res, next) {
+        try {
+            let students = null;
+            if (!req.body.branch) students = await Student.find();
+            else students = await Student.find({academicCenter: req.body.branch});
+
+            res.status(200).json(students.length);
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
+
+    //get activity types
+    async getActivityTypes(req, res, next) {
+        try {
+            
+            const activityTypes = await ActivityType.find();
+
+            
+            res.status(200).json(activityTypes);
+        } catch (error) {
+            res.status(500).json({ message: `Server error: ${error}` });
+        }
+    }
+
+    //translate activity type
+    async translateActivityType (str){
+        try {
+            let activityType = null
+            if(str) activityType = await ActivityType.findOne({name: str});
+            if (!activityType) activityType= await ActivityType.findOne({code: str});
+
+            return activityType;
+        } catch (error) {
+            return null;
+        }
+    }
+
+    //translate branch
+    async translateBranch (str){
+        try {
+            let branch = null
+            if(str) branch = await Branch.findOne({name: str});
+            if (!branch) branch= await Branch.findOne({code: str});
+
+            return branch;
+        } catch (error) {
+            return null;
+        }
     }
 
 
