@@ -90,6 +90,7 @@ const cancelActivity = async (req, res, next) => {
 }
 
 const doneActivity = async (req, res, next) => {
+    console.log("doneActivityAdmin");
     try{
         await SingeltonDAO.doneActivity(req, res, next);
     }catch(error) {
