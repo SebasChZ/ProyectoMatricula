@@ -18,6 +18,7 @@ import { ViewActivityPage } from "./views/ViewActivityPage";
 import { EditProfessorPage } from "./views/EditProfessorPage";
 import { ModifyActivityPage } from "./views/ModifyActivityPage";
 import { TeamsPage } from "./views/TeamsPage";
+import {AddActivityPage} from "./views/AddActivityPage";
 
 const ROLES = {
   Professor: 1597,
@@ -63,15 +64,17 @@ export default function App() {
           <Route path="/ver-plan" element={<VerPlanPage />} />
           <Route path="/crear-plan" element={<CreatePlan />} />
           <Route path="/view-activity" element={<ViewActivityPage />} />
-          {/* This should not be here, it should be moved to just Coordinator routes */}
-          <Route path="/modificar-plan" element={<ModifyPlanTrabajoPage />} />
-          <Route path="/modificar-actividad" element={<ModifyActivityPage />} />
+          
+          
         </Route>
 
         {/* Coordinator routes */}
         <Route element={<RequireAuth allowedRoles={[ROLES.Coordinator]} />}>
           <Route path="/createPlan" element={<CreatePlan />} />
           <Route path="/viewStudents" element={<ViewStudentsPage />} />
+          <Route path="/modificar-plan" element={<ModifyPlanTrabajoPage />} />
+          <Route path="/modificar-actividad" element={<ModifyActivityPage />} />
+          <Route path="/addActivity" element={<AddActivityPage />} />
         </Route>
 
         {/* Assistant routes */}

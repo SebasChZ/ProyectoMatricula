@@ -21,14 +21,19 @@ export function VerPlanPage() {
               <ActivityCard />
               <ActivityCard />
             </div>
-            <div className="text-left mt-8 h-10">
-              <Link
-                className="text-white font-semibold bg-blue-950 px-6 py-2 rounded-3xl"
-                to="/modificar-plan"
-              >
-                Modificar
-              </Link>
+            <div className="flex justify-center mt-8">
+              <div className="text-left h-10">
+                <Link
+                  className="text-white font-semibold bg-blue-950 px-6 py-2 rounded-3xl"
+                  to="/modificar-plan"
+                >
+                  Modificar
+                </Link>
+              </div>
+
+              
             </div>
+
           </div>
           <div className="basis-1/5 mr-20">
             <div className="shadow-xl rounded-md mb-8 p-4">

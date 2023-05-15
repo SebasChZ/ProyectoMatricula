@@ -85,13 +85,27 @@ export function ModifyPlanTrabajoPage() {
                 </div>
               </div>
               <div className="flex flex-col justify-end">
-                <Link
-                  className="text-white font-semibold bg-blue-950 px-6 py-2 rounded-3xl h-10"
-                  to="/modificar-plan"
-                >
-                  Guardar cambios
-                </Link>
+                <div className="flex items-center justify-between">
+                  <Link
+                    className="text-white text-center font-semibold bg-blue-950 px-6 py-2 rounded-3xl h-15"
+                    to="/modificar-plan"
+                  >
+                    Guardar cambios
+                  </Link>
+
+                  <Link
+                    className="text-white text-center font-semibold bg-blue-950 px-6 py-2 rounded-3xl h-15 ml-2"
+                    to="/addActivity"
+                  >
+                    Agregar Actividad
+                  </Link>
+
+                </div>
               </div>
+
+              
+
+             
             </form>
           </div>
           <div>
