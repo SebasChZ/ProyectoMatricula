@@ -37,6 +37,12 @@ app.use('/team', require('./routes/api/teamRouter'));
 app.use('/activitiesPlan', require('./routes/api/activitiesPlanRouter'));
 app.use('/activity', require('./routes/api/activityRouter'));
 app.use('/user', require('./routes/api/userRouter'));
+app.use('/utilities', require('./routes/api/utilitiesRouter'));
+
+//const insertUtilities = require('./controllers/insertUtilities');
+//insertUtilities.insertBranches();
+//insertUtilities.insertActivities();
+
 
 //custom middleware of error handling
 app.use(erorrHandler);

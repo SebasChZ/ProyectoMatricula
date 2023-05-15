@@ -16,5 +16,4 @@ router.route('/nextActivity')
     .get(adminActivitiesPlan.getNextActivity)
 
 
-
 module.exports = router;
