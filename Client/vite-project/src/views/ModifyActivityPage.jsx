@@ -181,7 +181,7 @@ export function ModifyActivityPage() {
               />
               <CreateIcon />
             </div>
-            <div className="flex w-full justify-between px-8 mt-8">
+            <div className="flex w-full justify-between px-8 mt-16">
               <div className="basis-1/2">
                 <textarea
                   value={description}
@@ -192,7 +192,7 @@ export function ModifyActivityPage() {
                   className="resize-none appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   onChange={(e) => setDescription(e.target.value)}
                 ></textarea>
-                <button className="h-[368px] w-full" onClick={openModal}>
+                <button className="h-[368px] w-full mt-8" onClick={openModal}>
                   <img
                     src={poster}
                     alt="Afiche"
