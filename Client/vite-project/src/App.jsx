@@ -17,6 +17,7 @@ import { ModifyPlanTrabajoPage } from "./views/ModifyPlanTrabajoPage";
 import { ViewActivityPage } from "./views/ViewActivityPage";
 import { EditProfessorPage } from "./views/EditProfessorPage";
 import { ModifyActivityPage } from "./views/ModifyActivityPage";
+import { TeamsPage } from "./views/TeamsPage";
 
 const ROLES = {
   Professor: 1597,
