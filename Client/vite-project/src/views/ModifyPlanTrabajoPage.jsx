@@ -92,6 +92,8 @@ export function ModifyPlanTrabajoPage() {
                   Guardar cambios
                 </Link>
               </div>
+
+             
             </form>
           </div>
           <div>
