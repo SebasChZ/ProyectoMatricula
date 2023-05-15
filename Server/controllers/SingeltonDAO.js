@@ -1120,17 +1120,27 @@ class SingletonDAO {
     async doneActivity(req, res, next) {
 
         try {
+            const { activityId, evidence } = req.body;
 
-            const activity = req.body;
-            const activityFound = await Activity.findOne({ _id: activity.activityId });
+            console.log("activityId: " + activityId + " evidence: " + JSON.stringify(evidence));
+
+            const activityFound = await Activity.findOne({ _id: activityId });
+
             if (!activityFound) {
-                return res.status(400).json({ message: 'This activity dont exits ' });
+              return res.status(400).json({ message: 'This activity does not exist' });
             }
 
             let date = new Date();
+            const newEvidence = {
+              dateTime: date,
+              assistImages: evidence[0].assistImages,
+              evidenceImages: evidence[0].evidenceImages,
+              link: evidence[0].link
+            };
 
-            await Activity.updateOne({ _id: activity.activityId }, { $set: { status: 3, evidence: { comment: activity.evidence, date: date } } });
-            res.status(200).json({ state: true, message: 'The Activity has been cancel' });
+            await Activity.updateOne({ _id: activityId }, { $set: { status: 3, evidence: newEvidence } });
+            res.status(200).json({ state: true, message: 'The Activity is finished' });
+
 
 
         } catch (error) {

@@ -107,7 +107,7 @@ const activitySchema = new mongoose.Schema({
   // La evidencia 3: Status realizada
   //Es tipo objeto porque se puede subir mas de un archivo o más o lo que le de la gana ahí abría que modifcarlo según se requiera
   evidence: {
-    type: Object,
+    type: {dateTime: Date, assistImages: [String], evidenceImages: [String], link: String, _id:false},
     required: false,
     default: {}
   },
