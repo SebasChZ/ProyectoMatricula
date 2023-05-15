@@ -1,4 +1,43 @@
+import React, { useState } from 'react'
+import axios from "../api/axios";
+
 export function ForgotPasswordPage() {
+  
+  const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.put('/user/updatePassword', {
+        usuario: email,
+        newPassword,
+        confirmPassword
+      });
+
+      if (response.data) {
+        setSuccess(response.data.msg);
+        setError("");
+      } else {
+        throw new Error('Response data is undefined');
+      }
+    } catch (err) {
+      if (err.response) {
+        setError(err.response.data.msg);
+      } else {
+        setError(err.message || 'Something went wrong');
+      }
+      setSuccess("");
+    }
+  };
+
+
+
   const styles = {
     backgroundImage: "url(/src/img/backgroundLogin.jpg)",
     backgroundSize: "cover",
@@ -17,7 +56,7 @@ export function ForgotPasswordPage() {
               <h2 className="mb-1 text-[40px] font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Recordar Contraseña
               </h2>
-              <form className="mt-4 space-y-4 lg:mt-5 md:space-y-5" action="#">
+              <form className="mt-4 space-y-4 lg:mt-5 md:space-y-5" onSubmit={handleSubmit}>
                 <div>
                   <label
                     htmlFor="email"
@@ -33,6 +72,8 @@ export function ForgotPasswordPage() {
                     placeholder=""
                     required=""
                     style={{ width: "100%" }}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 <div>
@@ -65,6 +106,9 @@ export function ForgotPasswordPage() {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required=""
+                    style={{ width: "100%" }}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
                   />
                 </div>
                 <div>
@@ -81,15 +125,21 @@ export function ForgotPasswordPage() {
                     placeholder=""
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required=""
+                    style={{ width: "100%" }}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                 </div>
 
                 <button
                   type="submit"
                   className="w-full text-white bg-primary-1000 hover:bg-primary-1000 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-00747F dark:hover:bg-00747F dark:focus:ring-primary-800"
+                  onClick={() => console.log('Link was clicked')}
                 >
                   Continuar
                 </button>
+                {error && <p>{error}</p>}
+                {success && <p>{success}</p>}
               </form>
             </div>
           </div>

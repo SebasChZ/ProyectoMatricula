@@ -9,6 +9,6 @@ router.route('/register')
     .post(adminUserControllers.registerUser)
 
 router.route('/updatePassword')
-    .post(adminUserControllers.updatePassword);
+    .put(adminUserControllers.updatePassword);
     
 module.exports = router;
