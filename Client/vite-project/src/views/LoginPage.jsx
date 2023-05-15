@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import axios from "../api/axios";
 import logoImage from "../img/logoTec.png"; // importar el logo del tec
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 const LOGIN_URL = "/login/auth";
 
@@ -145,7 +146,7 @@ export function LoginPage() {
               <p className="text-sm font-light text-002857 ">
                 <Link
                   to="/forgot-password"
-                  className="font-medium text-primary-1100 "
+                  className="font-medium text-primary-1100"
                 >
                   ¿Olvidó su contraseña?
                 </Link>
