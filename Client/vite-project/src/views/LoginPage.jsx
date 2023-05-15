@@ -37,11 +37,8 @@ export function LoginPage() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(JSON.stringify(response?.data));
-      //console.log(JSON.stringify(response));
-      // const accessToken = response?.data?.accessToken;
+      console.log("It did the post");
       const roles = response?.data?.roles;
-      console.log(roles);
       setAuth({ email, password, roles });
       setEmail("");
       setPassword("");
@@ -59,9 +56,6 @@ export function LoginPage() {
       }
       errorRef.current.focus();
     }
-    // let roles = [3123, 4478];
-    // setAuth({ email, password, roles });
-    // navigate("/home-switch");
   };
 
   const styles = {

@@ -19,7 +19,7 @@ export const ActivityCard = () => {
           </a>
           <span className="font-extralight">Sede Cartago</span>
           <div className="my-4">
-            <img src={chessImg} alt="activityImg" class="rounded-lg w-60" />
+            <img src={chessImg} alt="activityImg" className="rounded-lg w-60" />
           </div>
           <div>
             <span className="font-regular">2:30 p.m.</span>
