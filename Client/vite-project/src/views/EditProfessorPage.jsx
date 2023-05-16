@@ -326,6 +326,15 @@ export function EditProfessorPage() {
                       Editar
                     </button>
                   </div>
+
+                  <div className="max-w-full w-3/12 h-full ">
+                    <button
+                      type="submit"
+                      className="w-full justify-center text-white bg-primary-1000 hover:bg-primary-1000 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-00747F dark:hover:bg-primary-1000 dark:focus:ring-primary-800"
+                    >
+                      Dar de Baja
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

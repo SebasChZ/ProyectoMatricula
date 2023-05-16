@@ -87,6 +87,7 @@ export default function App() {
           <Route path="/home-assistant" element={<AssistantHomePage />} />
           <Route path="/viewProfile" element={<ViewProfilePage />} />
           <Route path="/editProfile" element={<EditProfessorPage />} />
+          <Route path="/teamPage" element={<TeamsPage />} />
         </Route>
 
         {/* AssistantCA routes */}

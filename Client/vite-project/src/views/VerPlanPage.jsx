@@ -1,7 +1,10 @@
 import { ActivityCard } from "../components/ActivityCard";
 import { Link } from "react-router-dom";
 
+
 export function VerPlanPage() {
+  
+
   return (
     <div className="ml-14 mt-8">
       <section className="overflow-hidden">
@@ -22,16 +25,14 @@ export function VerPlanPage() {
               <ActivityCard />
             </div>
             <div className="flex justify-center mt-8">
+                        
               <div className="text-left h-10">
-                <Link
-                  className="text-white font-semibold bg-blue-950 px-6 py-2 rounded-3xl"
-                  to="/modificar-plan"
-                >
-                  Modificar
-                </Link>
+              <Link className="text-white font-semibold bg-blue-950 px-6 py-2 rounded-3xl" to="/modificar-plan">
+        Modificar
+      </Link>
               </div>
 
-              
+
             </div>
 
           </div>
