@@ -19,6 +19,7 @@ import { EditProfessorPage } from "./views/EditProfessorPage";
 import { ModifyActivityPage } from "./views/ModifyActivityPage";
 import { TeamsPage } from "./views/TeamsPage";
 import {AddActivityPage} from "./views/AddActivityPage";
+import {EditStudentPage } from "./views/EditStudentPage";
 
 const ROLES = {
   Professor: 1597,
@@ -64,7 +65,7 @@ export default function App() {
           <Route path="/ver-plan" element={<VerPlanPage />} />
           <Route path="/crear-plan" element={<CreatePlan />} />
           <Route path="/view-activity" element={<ViewActivityPage />} />
-          
+          <Route path="/editStudentPage" element={<EditStudentPage />} />
           
         </Route>
 
