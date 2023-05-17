@@ -18,7 +18,7 @@ const ProfessorSchema = new mongoose.Schema({
     officePhoneNumber: {
         type: String
     },
-    cellPhoneNumber: {
+    phoneNumber: {
         type: String
     },
     photo: {
