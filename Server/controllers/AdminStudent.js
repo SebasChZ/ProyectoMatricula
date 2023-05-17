@@ -6,13 +6,8 @@ const path = require('path');
 
 
 const modifyStudent = async (req, res, next) => {
-
-    const { id, newName, newLastName1, newLastName2, newEmail, newPhone } = req.body;
-
-    // if (!id || !name || !lastname1 || !lastname2 || !email || !cellphone) { 
-    //     return res.status(400).json({ msg: 'Please enter all fields' });
-    // }
-        res.body = req.body;
+    console.log("modifyStudent admin");
+    console.log(req.body);
     await SingeltonDAO.modifyStudent(req, res, next);
     next();
 };
@@ -70,7 +65,9 @@ const registerExcel = async (req, res, next) => {
 };
 
 const generateExcel = async (req, res, next) => {
-    
+
+        console.log("generateExcel admin");
+
         try {
             
             await SingeltonDAO.generateExcel(req, res, next);

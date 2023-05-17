@@ -52,7 +52,7 @@ export function AssistantHomePage() {
 
         <div class="justify-center mx-5">
           <h3 class="text-gray-900 md:text-2xl">
-            Miembros del Equipo
+            Profesores
           </h3>
           <div class="flex items-center justify-start overflow-auto ">
             <div class="flex max-w-xs">

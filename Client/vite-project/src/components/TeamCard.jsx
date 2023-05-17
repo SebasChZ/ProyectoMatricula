@@ -43,14 +43,14 @@ export const TeamCard = () => {
           </div>
         </div>
         <Link to="/teamPage">
-  <button
-    type="submit"
-    className="font-light w-full justify-center text-white bg-gradient-to-r from-teal-700 to-cyan-950 font-medium rounded-lg text-lg px-5 py-3 text-center hover:bg-gradient-to-r hover:from-teal-600 hover:to-cyan-800 hover:shadow-2xl transition-all duration-300 ease-in-out hover:scale-110 hover:-translate-y-1"
-  >
-    <AddCircleOutlineIcon style={{ fontSize: 30 }} />
-    Agregar miembro
-  </button>
-</Link>
+          <button
+            type="submit"
+            className="font-light w-full justify-center text-white bg-gradient-to-r from-teal-700 to-cyan-950 font-medium rounded-lg text-lg px-5 py-3 text-center hover:bg-gradient-to-r hover:from-teal-600 hover:to-cyan-800 hover:shadow-2xl transition-all duration-300 ease-in-out hover:scale-110 hover:-translate-y-1"
+          >
+            <AddCircleOutlineIcon style={{ fontSize: 30 }} />
+            Agregar miembro
+          </button>
+      </Link>
       </div>
     </div>
 

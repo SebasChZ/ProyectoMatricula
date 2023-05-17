@@ -131,41 +131,42 @@ class SingletonDAO {
     //                      Student Admin Functions
     //-------------------------------------------------------------------------------------
     async modifyStudent(req, res, next) {
-        //check for duplicate usernames in the db
 
-        const { id, newName, newLastName1, newLastName2, newEmail, newPhone } = req.body
-
-        const studentToModify = await Student.findOne({ studentId: id });
-
-        if (!studentToModify) {
-            return res.status(400).json({ msg: 'studentId not found!' });
-        }
-
+        console.log("Modify student");
+        const { id } = req.params; // Retrieve the id from req.params
+        const { newName, newLastName1, newLastName2, branch, newEmail, newPhone } = req.body;
+      
         try {
-            if (studentToModify) {
-                const updateInformation = {
-                    $set: {
-                        firstName: newName,
-                        lastname1: newLastName1,
-                        lastname2: newLastName2,
-                        email: newEmail,
-                        cellphone: newPhone
-                    },
-                };
-
-                const modification = await Student.updateOne({ studentId: id }, updateInformation);
-
-                if (modification) {
-                    res.status(200).json({ msg: 'Student modified' });
-                } else {
-                    res.status(400).json({ msg: 'Student not modified' });
-                }
+          const studentToModify = await Student.findOne({ studentId: id });
+      
+          if (!studentToModify) {
+            return res.status(400).json({ msg: 'Student not found!' });
+          }
+      
+          const updateInformation = {
+            $set: {
+              firstName: newName,
+              lastName1: newLastName1,
+              lastName2: newLastName2,
+              email: newEmail,
+              cellphone: newPhone,
+              academicCenter: branch
             }
-        } catch {
-            res.status(500).json({ msg: 'Server error' });
+          };
+      
+          const modification = await Student.updateOne({ studentId: id }, updateInformation);
+      
+          if (modification.nModified > 0) {
+            res.status(200).json({ msg: 'Student modified' });
+          } else {
+            res.status(400).json({ msg: 'Student not modified' });
+          }
+        } catch (error) {
+          console.error('An error occurred', error);
+          res.status(500).json({ msg: 'Server error' });
         }
-        next();
-    }
+      }
+      
 
     async getAllAlphabetical(req, res, next) {
 
@@ -251,59 +252,117 @@ class SingletonDAO {
 
     }
     async generateExcel(req, res, next) {
+        // try {
+        //     const students = await Student.find({});
+        //     if (students.length > 0) {
+
+
+        //         let workbook = xlsx.utils.book_new();
+
+        //         // Group students by campus
+        //         const campusGroups = {};
+        //         students.forEach(student => {
+        //             const campus = student.academicCenter;
+        //             if (!campusGroups[campus]) {
+        //                 campusGroups[campus] = [];
+        //             }
+        //             console.log(student);
+        //             campusGroups[campus].push(student);
+        //         });
+
+
+        //         for (const campus in campusGroups) {
+        //             const students = campusGroups[campus];
+
+        //             // Convert each student into a simple object
+        //             const data = students.map(student => {
+        //                 return {
+        //                     id: student.studentId,
+        //                     name: student.firstName,
+        //                     lastName1: student.lastName1,
+        //                     lastName2: student.lastName2,
+        //                     email: student.email,
+        //                     phone: student.cellPhoneNumber,
+        //                     campus: student.academicCenter,
+        //                 };
+        //             });
+
+        //             const worksheet = xlsx.utils.json_to_sheet(data);
+        //             xlsx.utils.book_append_sheet(workbook, worksheet, campus);
+        //         }
+
+        //         //Write workbook to file
+        //         xlsx.writeFile(workbook, 'Students.xlsx');
+
+        //         res.status(200).json({ message: "Excel file generated successfully" });
+
+
+        //     } else {
+        //         res.status(400).json({ msg: 'No students found' });
+        //     }
+        // } catch (error) {
+        //     res.status(500).json({ msg: 'Server error' });
+        // } finally {
+        //     next();
+        // }
+
+        console.log("Generating Excel file DAO")
+
         try {
             const students = await Student.find({});
             if (students.length > 0) {
-
-
-                let workbook = xlsx.utils.book_new();
-
-                // Group students by campus
-                const campusGroups = {};
-                students.forEach(student => {
-                    const campus = student.academicCenter;
-                    if (!campusGroups[campus]) {
-                        campusGroups[campus] = [];
-                    }
-                    console.log(student);
-                    campusGroups[campus].push(student);
-                });
-
-
-                for (const campus in campusGroups) {
-                    const students = campusGroups[campus];
-
-                    // Convert each student into a simple object
-                    const data = students.map(student => {
-                        return {
-                            id: student.studentId,
-                            name: student.firstName,
-                            lastName1: student.lastName1,
-                            lastName2: student.lastName2,
-                            email: student.email,
-                            phone: student.cellPhoneNumber,
-                            campus: student.academicCenter,
-                        };
-                    });
-
-                    const worksheet = xlsx.utils.json_to_sheet(data);
-                    xlsx.utils.book_append_sheet(workbook, worksheet, campus);
+              let workbook = xlsx.utils.book_new();
+        
+              // Group students by campus
+              const campusGroups = {};
+              students.forEach((student) => {
+                const campus = student.academicCenter;
+                if (!campusGroups[campus]) {
+                  campusGroups[campus] = [];
                 }
-
-                //Write workbook to file
-                xlsx.writeFile(workbook, 'Students.xlsx');
-
-                res.status(200).json({ message: "Excel file generated successfully" });
-
-
+                console.log(student);
+                campusGroups[campus].push(student);
+              });
+        
+              for (const campus in campusGroups) {
+                const students = campusGroups[campus];
+        
+                // Convert each student into a simple object
+                const data = students.map((student) => {
+                  return {
+                    id: student.studentId,
+                    name: student.firstName,
+                    lastName1: student.lastName1,
+                    lastName2: student.lastName2,
+                    email: student.email,
+                    phone: student.cellPhoneNumber,
+                    campus: student.academicCenter,
+                  };
+                });
+        
+                const worksheet = xlsx.utils.json_to_sheet(data);
+                xlsx.utils.book_append_sheet(workbook, worksheet, campus);
+              }
+        
+              // Generate Excel file buffer
+              const excelBuffer = xlsx.write(workbook, { type: "buffer", bookType: "xlsx" });
+        
+              // Set response headers
+              res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+              res.setHeader("Content-Disposition", "attachment; filename=Students.xlsx");
+        
+              // Send the Excel file buffer as the response
+              res.send(excelBuffer);
+        
+              return;
             } else {
-                res.status(400).json({ msg: 'No students found' });
+              res.status(400).json({ msg: "No students found" });
             }
-        } catch (error) {
-            res.status(500).json({ msg: 'Server error' });
-        } finally {
+          } catch (error) {
+            res.status(500).json({ msg: "Server error" });
+          } finally {
             next();
-        }
+          }
     };
 
 

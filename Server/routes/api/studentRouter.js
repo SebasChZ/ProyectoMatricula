@@ -79,7 +79,9 @@ router.route('/id/:id')
     .get(adminStudentControllers.getAllId)
 
 router.route('/excel')
-    .get(adminStudentControllers.generateExcel)
+    .post(adminStudentControllers.generateExcel)
 
+router.route('/modify/:id')
+    .put(adminStudentControllers.modifyStudent)
 
 module.exports = router;

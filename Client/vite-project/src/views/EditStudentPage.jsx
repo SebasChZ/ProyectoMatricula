@@ -2,15 +2,16 @@ import { useState, useRef, useEffect } from "react";
 import axios from "../api/axios";
 import { Link } from "react-router-dom";
 
+const studentRoute = "http://localhost:3500/student";
 
 export function EditStudentPage() {
-    const [firstName, setfirstName] = useState("");
-    const [lastName1, setlastName1] = useState("");
-    const [lastName2, setlastName2] = useState("");
-    const [carrera, setcarrera] = useState("");
+    const [newName, setfirstName] = useState("");
+    const [newLastName1, setlastName1] = useState("");
+    const [newLastName2, setlastName2] = useState("");
     const [branch, setbranch] = useState("");
-    const [email, setEmail] = useState("");
-    const [celular, setcelular] = useState("");
+    const [newEmail, setEmail] = useState("");
+    const [newPhone, setcelular] = useState("");
+    const [id, setCode] = useState("");
   
     const errorRef = useRef();
   
@@ -19,54 +20,55 @@ export function EditStudentPage() {
     useEffect(() => {
       setErrorMsg("");
     }, [
-      firstName,
-      lastName1,
-      lastName2,
-      carrera,
+      id,
+      newName,
+      newLastName1,
+      newLastName2,
       branch,
-      email,
-      celular,
+      newEmail,
+      newPhone,
     ]);
   
     const editStudent = async (e) => {
+      console.log("editStudent button clicked");
+
       e.preventDefault();
       try {
-        const response = await axios.post(
-          LOGIN_URL,
-          JSON.stringify({
-            firstName,
-            lastName1,
-            lastName2,
-            carrera,
+        const response = await axios.put(
+          `http://localhost:3500/student/modify/${id}`,
+          {
+            id,
+            newName,
+            newLastName1,
+            newLastName2,
             branch,
-            email,
-            celular,
-          }),
+            newEmail,
+            newPhone,
+          },
           {
             headers: { "Content-Type": "application/json" },
           }
         );
         console.log(JSON.stringify(response?.data));
-        
+  
         const roles = response?.data?.status;
         alert("Successfully edited" + response?.data?.password);
-        setfirstName("");
-        setlastName1("");
-        setlastName2("");
-        setcarrera("");
-        setbranch("");
+        setFirstName("");
+        setLastName1("");
+        setLastName2("");
+        setBranch("");
         setEmail("");
-        setcelular("");
-        navigate("/home-switch");
+        setCelular("");
+        setCode("");
       } catch (err) {
-        if (!err?.response) {
+        if (!err.response) {
           setErrorMsg("No Server Response" + err);
-        } else if (err.response?.status === 400) {
-          setErrorMsg("Missing Username or Password" + err.response?.data);
-        } else if (err.response?.status === 401) {
+        } else if (err.response.status === 400) {
+          setErrorMsg("Missing Username or Password" + err.response.data);
+        } else if (err.response.status === 401) {
           setErrorMsg("Unauthorized");
         } else {
-          console.log(err.response?.data);
+          console.log(err.response.data);
           setErrorMsg("Login Failed" + err);
         }
         errRef.current.focus();
@@ -108,7 +110,7 @@ export function EditStudentPage() {
                     id="grid-first-name"
                     type="text"
                     placeholder=""
-                    value={firstName}
+                    value={newName}
                   />
                 </div>
                 <div className="w-full md:w-1/4 px-3">
@@ -126,7 +128,7 @@ export function EditStudentPage() {
                     id="grid-last-name"
                     type="text"
                     placeholder=""
-                    value={lastName1}
+                    value={newLastName1}
                   />
                 </div>
                 <div className="w-full md:w-1/4 px-3">
@@ -144,31 +146,13 @@ export function EditStudentPage() {
                     id="grid-last-name"
                     type="text"
                     placeholder=""
-                    value={lastName2}
+                    value={newLastName2}
                   />
                 </div>
               </div>
   
               <div className="flex flex-wrap -mx-20 mb-6">
-                <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                  <label
-                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                    htmlFor="grid-carrera"
-                  >
-                    Carrera
-                  </label>
-                  <input
-                    onChange={(e) => {
-                      setcarrera(e.target.value);
-                    }}
-                    className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
-                    id="grid-first-name"
-                    type="text"
-                    placeholder=""
-                    value={carrera}
-                  />
-                </div>
-                
+        
                 <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
                   <label
                     className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
@@ -221,7 +205,7 @@ export function EditStudentPage() {
                     id="grid-first-name"
                     type="text"
                     placeholder=""
-                    value={email}
+                    value={newEmail}
                   />
                 </div>
                 <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
@@ -239,7 +223,28 @@ export function EditStudentPage() {
                     id="grid-first-name"
                     type="text"
                     placeholder=""
-                    value={celular}
+                    value={newPhone}
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-wrap -mx-20 mb-6">
+                <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+                  <label
+                    className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
+                    htmlFor="grid-code"
+                  >
+                    Carne
+                  </label>
+                  <input
+                    onChange={(e) => {
+                      setCode(e.target.value);
+                    }}
+                    className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
+                    id="grid-code"
+                    type="text"
+                    placeholder=""
+                    value={id}
                   />
                 </div>
               </div>
@@ -250,15 +255,14 @@ export function EditStudentPage() {
   
                   <div className="flex justify-between items-center ">
   
-                    <div className="max-w-full w-3/12 h-full ">
-                      <Link
-                        
-                        className="w-full justify-center text-white bg-primary-1000 hover:bg-primary-1000 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-00747F dark:hover:bg-primary-1000 dark:focus:ring-primary-800"
-                        to="/home-switch"
-                      >
-                        Editar
-                      </Link>
-                    </div>
+                  <div className="max-w-full w-3/12 h-full">
+                    <button
+                      onClick={editStudent} // Call the editStudent function on button click
+                      className="w-full justify-center text-white bg-primary-1000 hover:bg-primary-1000 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-00747F dark:hover:bg-primary-1000 dark:focus:ring-primary-800"
+                    >
+                      Editar
+                    </button>
+                  </div>
                   </div>
                 </div>
               </div>

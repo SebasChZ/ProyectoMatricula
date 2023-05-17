@@ -66,6 +66,7 @@ export default function App() {
           <Route path="/crear-plan" element={<CreatePlan />} />
           <Route path="/view-activity" element={<ViewActivityPage />} />
           <Route path="/editStudentPage" element={<EditStudentPage />} />
+          <Route path="/teamPage" element={<TeamsPage />} />
           
         </Route>
 
