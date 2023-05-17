@@ -29,7 +29,7 @@ export function RegisterProfessorPage() {
     lastName2,
     officePhoneNumber,
     phoneNumber,
-    branch,
+    branch, 
     email,
     photo,
   ]);
@@ -351,7 +351,7 @@ export function RegisterProfessorPage() {
         </div>
       </div>
 
-      <div className="bg-gray-100 flex justify-around py-5 ">
+      {/* <div className="bg-gray-100 flex justify-around py-5 ">
         <div class="flex items-center w-full justify-start overflow-auto">
           <div class="flex justify-start max-w-xs ">
             {professors.map((professor) => (
@@ -359,9 +359,9 @@ export function RegisterProfessorPage() {
             ))}
           </div>
         </div>
-      </div>
+      </div> */}
 
-      
+
     </div>
   );
 }

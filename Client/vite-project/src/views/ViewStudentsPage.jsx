@@ -1,6 +1,95 @@
 import { Link } from "react-router-dom";
 
+import { useState, useEffect } from "react";
+
+const studentRoute = "http://localhost:3500/student";
+
 export function ViewStudentsPage() {
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
+  const [param, setParam] = useState("");
+  const [students, setStudents] = useState([]);
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const fetchStudents = async () => {
+    try {
+      let url = studentRoute + "/all";
+      if (filter === "branch" && param !== "") {
+        url = studentRoute + "/campus/" + param;
+      } else if (filter === "id" && param !== "") {
+        url = studentRoute + "/id/" + param;
+      }
+  
+      const response = await fetch(url);
+      const data = await response.json();
+      setStudents(data);
+    } catch (error) {
+      console.error("An error occurred", error);
+    }
+  };
+
+  const filteredStudents = students.filter(
+    (student) =>
+      student.studentId.includes(searchTerm) ||
+      student.lastName1.includes(searchTerm) ||
+      student.lastName2.includes(searchTerm) ||
+      student.firstName.includes(searchTerm) ||
+      student.academicCenter.includes(searchTerm) ||
+      student.email.includes(searchTerm) ||
+      student.cellPhoneNumber.includes(searchTerm)
+  );
+
+  const handleGenerateExcel = async (event) => {
+    event.preventDefault(); // Prevent the form submission and page navigation
+  
+    console.log("Generating Excel file...");
+  
+    try {
+      const response = await fetch(studentRoute+'/excel', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json' // Change the content type to application/json
+        },
+        responseType: 'blob' // Set the response type to blob
+      });
+  
+      if (response.ok) {
+        const blob = await response.blob();
+        const downloadUrl = URL.createObjectURL(blob);
+  
+        // Create a download link and trigger the download
+        const downloadLink = document.createElement("a");
+        downloadLink.href = downloadUrl;
+        downloadLink.download = "Students.xlsx";
+        downloadLink.click();
+  
+        // Clean up the temporary URL object
+        URL.revokeObjectURL(downloadUrl);
+      } else {
+        console.error("Failed to generate Excel file");
+      }
+    } catch (error) {
+      console.error("An error occurred", error);
+    }
+  };
+
+
+  const handleFilterChange = (e) => {
+    setFilter(e.target.value);
+  };
+
+  const handleParamChange = (e) => {
+    setParam(e.target.value);
+  };
+
+  const handleFilterSubmit = (e) => {
+    e.preventDefault();
+    fetchStudents();
+  };
+
   return (
     <div className="flex items-center justify-center h-screen">
       <form className="w-full max-w-x1">
@@ -22,9 +111,12 @@ export function ViewStudentsPage() {
                         <select
                           className="block w-full appearance-none rounded border border-gray-200 bg-gray-800 px-4 py-3 pr-8 leading-tight text-gray-300 focus:border-gray-500 focus:bg-gray-600 focus:outline-none"
                           id="grid-state"
+                          onChange={handleFilterChange} // Add onChange event handler
+                          value={filter} // Set the selected value
                         >
-                          <option>5</option>
-                          <option>10</option>
+                          <option value="all">Orden Alfabético</option>
+                          <option value="id">Carne</option>
+                          <option value="branch">Sede</option>
                         </select>
                         <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                           <svg
@@ -38,38 +130,46 @@ export function ViewStudentsPage() {
                       </div>
                     </div>
 
-                    <div className="relative flex w-full basis-1/6 mr-30 max-h-8 ml-2 mt-11">
-                      <input
-                        type="search"
-                        className="relative m-0 -mr-0.5 block w-[1px] min-w-0 flex-auto rounded-lg border border-solid border-neutral-300 bg-gray-200 bg-clip-padding px-1 py-[0.15rem] text-sm font-normal leading-[1.4] text-black outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none dark:border-neutral-600 dark:text-black dark:placeholder:text-black dark:focus:border-primary"
-                        placeholder="Buscar"
-                        aria-label="Search"
-                        aria-describedby="buscar"
-                      />
+                    {filter !== "all" && (
+                      <div className="relative basis-60 ml-3 mt-9">
+                        <input
+                          type="text"
+                          className="block w-full appearance-none rounded border border-gray-800 bg-gray-800 px-4 py-3 pr-8 leading-tight text-gray-300 focus:border-gray-500 focus:bg-gray-600 focus:outline-none"
+                          placeholder={
+                            filter === "id" ? "Carne" : "Sede"
+                          }
+                          value={param}
+                          onChange={handleParamChange}
+                        />
+                      </div>
+                    )}
+                    
 
-                      <button
-                        className="relative z-[2] flex items-center rounded-r bg-gray-900 px-3 py-1.5 text-xs font-medium uppercase leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-800 active:shadow-lg"
-                        type="button"
-                        id="buscar"
-                        data-te-ripple-init
-                        data-te-ripple-color="light"
+
+                    <button
+                      className="relative z-[2] flex items-center rounded-r bg-gray-900 px-3 py-1.5 text-xs font-medium uppercase leading-tight text-white shadow-md transition duration-150 ease-in-out hover:bg-primary-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-primary-800 active:shadow-lg"
+                      type="submit" // Change the button type to submit
+                      id="buscar"
+                      data-te-ripple-init
+                      data-te-ripple-color="light"
+                      onClick={handleFilterSubmit} // Call the handleFilterSubmit function on button click
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className="h-4 w-4"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          className="h-4 w-4"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                      </button>
+                        <path
+                          fillRule="evenodd"
+                          d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
                     </div>
 
-                    <div className="relative basis-60 ml-3 mt-9   ">
+                    {/* <div className="relative basis-60 ml-3 mt-9   ">
                       <select
                         className="block w-full appearance-none rounded border border-gray-800 bg-gray-800 px-4 py-3 pr-8 leading-tight text-gray-300 focus:border-gray-500 focus:bg-gray-600 focus:outline-none"
                         id="grid-state"
@@ -87,7 +187,7 @@ export function ViewStudentsPage() {
                           <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
                         </svg>
                       </div>
-                    </div>
+                    </div> */}
 
                     
                   </div>
@@ -123,12 +223,6 @@ export function ViewStudentsPage() {
                         </th>
                         <th
                           scope="col"
-                          className="border-r px-0 py-0 dark:border-neutral-500 w-14"
-                        >
-                          Carrera
-                        </th>
-                        <th
-                          scope="col"
                           className="border-r px-0 py-4 dark:border-neutral-500 w-14"
                         >
                           Sede
@@ -149,329 +243,34 @@ export function ViewStudentsPage() {
                     </thead>
 
                     <tbody>
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021077803
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Murillo
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Mena
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Maria Fernanda
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 ">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          fermurillo04@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          85986048
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021052792
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Martinez
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Hernandez
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Maynor Erks
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          chacalerks@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          60127974
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021052709{" "}
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Jimenez
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Salazar
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cesar Johel
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          thecsarbeat@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          84296827
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021075264
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Chaves
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Zumbado
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Sebastian
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          sebas04@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          61456812
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021077803
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Murillo
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Mena
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Maria Fernanda
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 ">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          fermurillo04@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          85986048
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021052792
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Martinez
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Hernandez
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Maynor Erks
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          chacalerks@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          60127974
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021052709{" "}
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Jimenez
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Salazar
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cesar Johel
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          thecsarbeat@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          84296827
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021075264
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Chaves
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Zumbado
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Sebastian
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          sebas04@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          61456812
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021077803
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Murillo
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Mena
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Maria Fernanda
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500 ">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          fermurillo04@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          85986048
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021052792
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Martinez
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Hernandez
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Maynor Erks
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          chacalerks@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          60127974
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021052709{" "}
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Jimenez
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Salazar
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cesar Johel
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          thecsarbeat@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          84296827
-                        </td>
-                      </tr>
-
-                      <tr className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600">
-                        <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
-                          2021075264
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Chaves
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Zumbado
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Sebastian
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Ingenieria en Computacion
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          Cartago
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          sebas04@estudiantec.cr
-                        </td>
-                        <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
-                          61456812
-                        </td>
-                      </tr>
+                      {filteredStudents.map((student) => (
+                        <tr
+                          key={student.studentId}
+                          className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600"
+                        >
+                          <td className="whitespace-nowrap border-r px-6 py-4 font-medium dark:border-neutral-500">
+                            {student.studentId}
+                          </td>
+                          <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
+                            {student.lastName1}
+                          </td>
+                          <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
+                            {student.lastName2}
+                          </td>
+                          <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
+                            {student.firstName}
+                          </td>
+                          <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
+                            {student.academicCenter}
+                          </td>
+                          <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
+                            {student.email}
+                          </td>
+                          <td className="whitespace-nowrap border-r px-6 py-4 dark:border-neutral-500">
+                            {student.cellPhoneNumber}
+                          </td>
+                        </tr>
+                      ))}
                     </tbody>
                   </table>
                 </div>
@@ -479,13 +278,12 @@ export function ViewStudentsPage() {
             </div>
 
             <div className="flex items-center justify-between mt-6 ml-12">
-              <a
-                href="#"
-                className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
-              >
-              
-                <span>Generar excel</span>
-              </a>
+            <button
+              className="flex items-center px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
+              onClick={handleGenerateExcel} // Call the generateExcel function on button click
+            >
+              <span>Generar excel</span>
+            </button>
 
               
 
@@ -501,9 +299,10 @@ export function ViewStudentsPage() {
 
             
           </div>
+
+          </form>
           
         </div>
-      </form>
-    </div>
+      
   );
 }
