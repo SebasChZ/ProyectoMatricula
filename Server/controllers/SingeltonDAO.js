@@ -14,6 +14,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const erorrHandler = require('../middleware/erorrHandler');
 
+
+
 const xlsx = require('xlsx');
 
 class SingletonDAO {
@@ -211,16 +213,22 @@ class SingletonDAO {
 
 
 
-    async registerExcel(data, req, res, next) {
+    async registerExcel(req, res, next) {
 
+
+        console.log("Registering students from Excel file")
 
         try {
+
+            console.log(req.body)
+
+            const file = req.file;
 
             // const arrayStudents = []
 
             // arrayStudents.push(data);
 
-            const students = await data.map((student) => ({
+            const students = await file.map((student) => ({
                 studentId: student.studentId,
                 lastName1: student.lastName1,
                 lastName2: student.lastName2,
@@ -310,8 +318,10 @@ class SingletonDAO {
             jsonProfessor["count"] = 0;
             const userFound = await User.findOne({ email: jsonProfessor.email }).exec();
 
-
-            jsonProfessor.branch = "CA";
+            console.log("officePhoneNumber", req.body.officePhoneNumber);
+            console.log("phoneNumber", req.body.phoneNumber);
+            
+            jsonProfessor.branch = req.body.branch;
 
             if (userFound) {
                 return res.status(400).json({ message: 'Already exits a professor with this email' });
@@ -323,7 +333,7 @@ class SingletonDAO {
 
                 await Professor.create({
                     "code": jsonProfessor.code, "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
-                    "email": jsonProfessor.email, "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber,
+                    "email": jsonProfessor.email, "officePhoneNumber": req.body.officePhoneNumber, "phoneNumber": req.body.phoneNumber,
                     "photo": jsonProfessor.photo, "branch": jsonProfessor.branch, "count": jsonProfessor.count
                 });
 
@@ -417,33 +427,40 @@ class SingletonDAO {
     // get all professor
     async getAllProfessor(req, res, next) {
         try {
-            const professorsFound = await Professor.aggregate([
-                {
-                    $lookup: {
-                        from: "branch",
-                        localField: "branch",
-                        foreignField: "code",
-                        as: "branch"
-                    }
-                },
-                {
-                    $set: {
-                        "branch": { $arrayElemAt: ["$branch.name", 0] }
-                    }
-                }
-            ]).exec();
-            if (!professorsFound) {
-                return res.status(400).json({ message: 'This code dont exits ' });
-
-            } else {
-
-
-                res.status(200).json({ state: true, professorsFounds: professorsFound });
-
+        const professorsFound = await Professor.aggregate([
+            {
+            $lookup: {
+                from: "branch",
+                localField: "branch",
+                foreignField: "code",
+                as: "branch"
             }
-
+            },
+            {
+            $set: {
+                "branch": { $arrayElemAt: ["$branch.name", 0] }
+            }
+            }
+        ]).exec();
+        
+        if (!professorsFound) {
+            return res.status(400).json({ message: 'This code doesn\'t exist' });
+        } else {
+            const formattedProfessors = professorsFound.map((professor) => ({
+            firstName: professor.firstName,
+            lastName: professor.lastName1 + ' ' + professor.lastName2,
+            city: professor.branch,
+            officePhoneNumber: professor.officePhoneNumber,
+            phoneNumber: professor.phoneNumber,
+            email: professor.email,
+            location: professor.location, // Modify this based on the actual property name
+            department: professor.department // Modify this based on the actual property name
+            }));
+    
+            res.status(200).json({ state: true, professorsFounds: formattedProfessors });
+        }
         } catch (e) {
-            res.status(500).json({ message: `Server error: ${e}` });
+        res.status(500).json({ message: `Server error: ${e}` });
         }
         next();
     }

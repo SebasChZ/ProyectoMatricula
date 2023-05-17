@@ -19,6 +19,8 @@ export function RegisterProfessorPage() {
 
   const [errorMsg, setErrorMsg] = useState("");
 
+  const [professors, setProfessors] = useState([]);
+
   useEffect(() => {
     setErrorMsg("");
   }, [
@@ -31,6 +33,19 @@ export function RegisterProfessorPage() {
     email,
     photo,
   ]);
+
+  useEffect(() => {
+    const fetchProfessors = async () => {
+      try {
+        const response = await axios.get(LOGIN_URL);
+        console.log('Response data:', response.data.professorsFounds);
+        setProfessors(response.data.professorsFounds);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchProfessors();
+  }, []);
 
   const registerProfessor = async (e) => {
     e.preventDefault();
@@ -210,11 +225,11 @@ export function RegisterProfessorPage() {
                     id="grid-state"
                     value={branch}
                   >
-                    <option>Cartago</option>
-                    <option>Limón</option>
-                    <option>San Carlos</option>
-                    <option>San José</option>
-                    <option>Alajuela</option>
+                    <option value="CA">Cartago</option>
+                    <option value="LI">Limón</option>
+                    <option value="SC">San Carlos</option>
+                    <option value="SJ">San José</option>
+                    <option value="AL">Alajuela</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg
@@ -339,21 +354,14 @@ export function RegisterProfessorPage() {
       <div className="bg-gray-100 flex justify-around py-5 ">
         <div class="flex items-center w-full justify-start overflow-auto">
           <div class="flex justify-start max-w-xs ">
-            <ProfessorCard />
-            <ProfessorCard />
-            <ProfessorCard />
-            <ProfessorCard />
-            <ProfessorCard />
-            <ProfessorCard />
-            <ProfessorCard />
-            <ProfessorCard />
-            <ProfessorCard />
-            <ProfessorCard />
-            <ProfessorCard />
-            <ProfessorCard />
+            {professors.map((professor) => (
+              <ProfessorCard key={professor.id} professor={professor} />
+            ))}
           </div>
         </div>
       </div>
+
+      
     </div>
   );
 }

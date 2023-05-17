@@ -1,11 +1,32 @@
+import { useState, useRef, useEffect } from "react";
+import axios from "../api/axios";
 import { TeamCard } from "../components/TeamCard";
 import { ProfessorCard } from "../components/ProfessorCard";
 import { ActivityCard } from "../components/ActivityCard";
 import { EstudiantesFileCard } from "../components/EstudiantesFileCard";
 
+const LOGIN_URL = "/professor";
 
 
 export function AssistantHomePage() {
+
+  const [professors, setProfessors] = useState([]);
+
+  useEffect(() => {
+    const fetchProfessors = async () => {
+      try {
+        const response = await axios.get(LOGIN_URL);
+        console.log('Response data:', response.data.professorsFounds);
+        setProfessors(response.data.professorsFounds);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchProfessors();
+  }, []);
+
+  console.log('Home Assistant Page');
+
   return (
 
 
@@ -35,10 +56,9 @@ export function AssistantHomePage() {
           </h3>
           <div class="flex items-center justify-start overflow-auto ">
             <div class="flex max-w-xs">
-              <ProfessorCard />
-              <ProfessorCard />
-              <ProfessorCard />
-              <ProfessorCard />
+              {professors.map((professor) => (
+                <ProfessorCard key={professor.id} professor={professor} />
+              ))}
             </div>
           </div>
         </div>
@@ -57,7 +77,7 @@ export function AssistantHomePage() {
 
         <div class="justify-center mx-5">
           <h3 class="text-gray-900 md:text-2xl">
-            Miembros del Equipo
+            Actividades
           </h3>
           <div class="flex items-center justify-start overflow-auto ">
             <div class="flex gap-10 overflow-auto scrollable py-6">
