@@ -5,75 +5,68 @@ import { Link } from "react-router-dom";
 const studentRoute = "http://localhost:3500/student";
 
 export function EditStudentPage() {
-    const [newName, setfirstName] = useState("");
-    const [newLastName1, setlastName1] = useState("");
-    const [newLastName2, setlastName2] = useState("");
-    const [branch, setbranch] = useState("");
-    const [newEmail, setEmail] = useState("");
-    const [newPhone, setcelular] = useState("");
-    const [id, setCode] = useState("");
-  
-    const errorRef = useRef();
-  
-    const [errorMsg, setErrorMsg] = useState("");
-  
-    useEffect(() => {
-      setErrorMsg("");
-    }, [
-      id,
-      newName,
-      newLastName1,
-      newLastName2,
-      branch,
-      newEmail,
-      newPhone,
-    ]);
-  
-    const editStudent = async (e) => {
-      console.log("editStudent button clicked");
+  const [newName, setFirstName] = useState("");
+  const [newLastName1, setLastName1] = useState("");
+  const [newLastName2, setLastName2] = useState("");
+  const [branch, setBranch] = useState("");
+  const [newEmail, setEmail] = useState("");
+  const [newPhone, setPhone] = useState("");
+  const [code, setCode] = useState("");
 
-      e.preventDefault();
-      try {
-        const response = await axios.put(
-          `http://localhost:3500/student/modify/${id}`,
-          {
-            id,
-            newName,
-            newLastName1,
-            newLastName2,
-            branch,
-            newEmail,
-            newPhone,
-          },
-          {
-            headers: { "Content-Type": "application/json" },
-          }
-        );
-        console.log(JSON.stringify(response?.data));
-  
-        const roles = response?.data?.status;
-        alert("Successfully edited" + response?.data?.password);
-        setFirstName("");
-        setLastName1("");
-        setLastName2("");
-        setBranch("");
-        setEmail("");
-        setCelular("");
-        setCode("");
-      } catch (err) {
-        if (!err.response) {
-          setErrorMsg("No Server Response" + err);
-        } else if (err.response.status === 400) {
-          setErrorMsg("Missing Username or Password" + err.response.data);
-        } else if (err.response.status === 401) {
-          setErrorMsg("Unauthorized");
-        } else {
-          console.log(err.response.data);
-          setErrorMsg("Login Failed" + err);
+  const errorRef = useRef();
+
+  const [errorMsg, setErrorMsg] = useState("");
+
+  useEffect(() => {
+    setErrorMsg("");
+  }, [code, newName, newLastName1, newLastName2, branch, newEmail, newPhone]);
+
+  const editStudent = async (e) => {
+    console.log("editStudent button clicked");
+
+    e.preventDefault();
+    try {
+      const response = await axios.put(
+        `${studentRoute}/modify/${code}`,
+        {
+          code,
+          newName,
+          newLastName1,
+          newLastName2,
+          branch,
+          newEmail,
+          newPhone,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
         }
-        errRef.current.focus();
+      );
+      console.log(JSON.stringify(response?.data));
+
+      const roles = response?.data?.status;
+      alert("Successfully edited" + response?.data?.password);
+      setFirstName("");
+      setLastName1("");
+      setLastName2("");
+      setBranch("");
+      setEmail("");
+      setPhone("");
+      setCode("");
+    } catch (err) {
+      if (!err.response) {
+        setErrorMsg("No Server Response" + err);
+      } else if (err.response.status === 400) {
+        setErrorMsg("Missing Username or Password" + err.response.data);
+      } else if (err.response.status === 401) {
+        setErrorMsg("Unauthorized");
+      } else {
+        console.log(err.response.data);
+        setErrorMsg("Login Failed" + err);
       }
-    };
+      errorRef.current.focus();
+    }
+  };
+
     return (
       <div className="flex flex-col h-screen">
         <p
@@ -104,7 +97,7 @@ export function EditStudentPage() {
                   </label>
                   <input
                     onChange={(e) => {
-                      setfirstName(e.target.value);
+                      setFirstName(e.target.value);
                     }}
                     className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                     id="grid-first-name"
@@ -122,7 +115,7 @@ export function EditStudentPage() {
                   </label>
                   <input
                     onChange={(e) => {
-                      setlastName1(e.target.value);
+                      setLastName1(e.target.value);
                     }}
                     className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                     id="grid-last-name"
@@ -140,7 +133,7 @@ export function EditStudentPage() {
                   </label>
                   <input
                     onChange={(e) => {
-                      setlastName2(e.target.value);
+                      setLastName2(e.target.value);
                     }}
                     className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                     id="grid-last-name"
@@ -163,7 +156,7 @@ export function EditStudentPage() {
                   <div className="relative">
                     <select
                       onChange={(e) => {
-                        setbranch(e.target.value);
+                        setBranch(e.target.value);
                       }}
                       className="appearance-none bg-white block w-full border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-gray-100 shadow-xl"
                       
@@ -217,7 +210,7 @@ export function EditStudentPage() {
                   </label>
                   <input
                     onChange={(e) => {
-                      setcelular(e.target.value);
+                      setPhone(e.target.value);
                     }}
                     className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                     id="grid-first-name"
