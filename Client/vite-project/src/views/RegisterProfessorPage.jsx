@@ -1,11 +1,14 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
-import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ProfessorCard } from "../components/ProfessorCard";
 
 const LOGIN_URL = "/professor";
 
 export function RegisterProfessorPage() {
+
+  const navigate = useNavigate();
+
   const [firstName, setfirstName] = useState("");
   const [lastName1, setlastName1] = useState("");
   const [lastName2, setlastName2] = useState("");
@@ -14,6 +17,10 @@ export function RegisterProfessorPage() {
   const [branch, setbranch] = useState("");
   const [email, setEmail] = useState("");
   const [photo, setphoto] = useState("");
+
+  const [consultProfessors, setConsultProfessors] = useState([]);
+
+  const [professorId, setProfessorId] = useState("");
 
   const errorRef = useRef();
 
@@ -94,6 +101,25 @@ export function RegisterProfessorPage() {
       errRef.current.focus();
     }
   };
+
+  const consult = async (e) => {
+    e.preventDefault();
+    try {
+      console.log("professorId:", professorId);
+  
+      const response = await axios.get(`${LOGIN_URL}/id/${professorId}`);
+      const professor = response.data.professor;
+  
+      if (professor) {
+        navigate("/viewProfile", { state: { consultProfessors: professor } });
+      } else {
+        setErrorMsg("Professor not found");
+      }
+    } catch (err) {
+      setErrorMsg("No Server Response" + err);
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <p
@@ -108,6 +134,7 @@ export function RegisterProfessorPage() {
           <form
             onSubmit={(e) => {
               registerProfessor(e);
+              consult(e);
             }}
           >
             <h2 className="mb-9 text-[40px] text-center  leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-black">
@@ -291,6 +318,37 @@ export function RegisterProfessorPage() {
                 </div>
               </div>
             </div>
+            <div className="flex flex-wrap -mx-2 mb-2">
+              <div className="w-full md:w-1/2 px-2 mb-6 md:mb-0">
+                <div className="flex items-center">
+                  <label className="block uppercase tracking-wide text-gray-700 text-xs text-center font-bold mr-2" htmlFor="grid-descripcion">
+                    Consultar ID
+                  </label>
+                  <input
+                    onChange={(e) => {
+                      setProfessorId(e.target.value);
+                    }}
+                    className="appearance-none block bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
+                    id="grid-first-name"
+                    type="text"
+                    placeholder=""
+                    value={professorId}
+                  />
+
+                  <button
+                  type="button"
+                  onClick={consult}
+                  className="justify-center text-white bg-gradient-to-r from-teal-700 to-cyan-950 font-medium rounded-lg text-sm px-5 py-2.5 text-center 
+                  hover:bg-gradient-to-r hover:from-teal-600 hover:to-cyan-800 hover:shadow-2xl transition-all duration-300 ease-in-out hover:scale-110 hover:-translate-y-1"
+                >
+                  Consultar
+                </button>
+                </div>
+              </div>
+            </div>
+
+
+
 
             <div className="flex flex-wrap -mx-20 mb-2">
               <div className="w-full px-3 mb-6 md:mb-0">
@@ -335,13 +393,13 @@ export function RegisterProfessorPage() {
                   </div>
 
                   <div className="max-w-full w-3/12 h-full ">
-                    <button
-                      type="submit"
-                      className="w-full justify-center text-white bg-gradient-to-r from-teal-700 to-cyan-950 font-medium rounded-lg text-sm px-5 py-2.5 text-center 
-                      hover:bg-gradient-to-r hover:from-teal-600 hover:to-cyan-800 hover:shadow-2xl transition-all duration-300 ease-in-out hover:scale-110 hover:-translate-y-1"
-                    >
-                      Registrar
-                    </button>
+                  <button
+                    type="submit"
+                    className="justify-center text-white bg-gradient-to-r from-teal-700 to-cyan-950 font-medium rounded-lg text-sm px-5 py-2.5 text-center 
+                    hover:bg-gradient-to-r hover:from-teal-600 hover:to-cyan-800 hover:shadow-2xl transition-all duration-300 ease-in-out hover:scale-110 hover:-translate-y-1"
+                  >
+                    Registrar
+                  </button>
 
                   </div>
                 </div>
@@ -351,6 +409,7 @@ export function RegisterProfessorPage() {
         </div>
       </div>
 
+      
       {/* <div className="bg-gray-100 flex justify-around py-5 ">
         <div class="flex items-center w-full justify-start overflow-auto">
           <div class="flex justify-start max-w-xs ">

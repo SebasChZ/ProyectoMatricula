@@ -2,18 +2,21 @@ import { useState, useRef, useEffect } from "react";
 import axios from "../api/axios";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 
-
 const LOGIN_URL = "/professor";
 
 export function EditProfessorPage() {
-  const [firstName, setfirstName] = useState("");
-  const [lastName1, setlastName1] = useState("");
-  const [lastName2, setlastName2] = useState("");
-  const [officePhoneNumber, setofficePhoneNumber] = useState("");
-  const [phoneNumber, setphoneNumber] = useState("");
-  const [branch, setbranch] = useState("");
+  const location = useLocation();
+  const { state } = location;
+  const code = state && state.code;
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName1, setLastName1] = useState("");
+  const [lastName2, setLastName2] = useState("");
+  const [officePhoneNumber, setOfficePhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [branch, setBranch] = useState("");
   const [email, setEmail] = useState("");
-  const [photo, setphoto] = useState("");
+  const [photo, setPhoto] = useState("");
 
   const errorRef = useRef();
 
@@ -22,6 +25,7 @@ export function EditProfessorPage() {
   useEffect(() => {
     setErrorMsg("");
   }, [
+    code,
     firstName,
     lastName1,
     lastName2,
@@ -32,12 +36,26 @@ export function EditProfessorPage() {
     photo,
   ]);
 
+  const navigate = useNavigate(); // Add this line
+
   const editProfessor = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        LOGIN_URL,
-        JSON.stringify({
+      console.log({
+        code,
+        firstName,
+        lastName1,
+        lastName2,
+        officePhoneNumber,
+        phoneNumber,
+        branch,
+        email,
+        photo,
+      });
+      const response = await axios.put(
+        `${LOGIN_URL}/modify/${code}`,
+        {
+          code,
           firstName,
           lastName1,
           lastName2,
@@ -46,24 +64,23 @@ export function EditProfessorPage() {
           branch,
           email,
           photo,
-        }),
+        },
         {
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(JSON.stringify(response?.data));
-      
+      console.log('New data', JSON.stringify(response?.data));
+  
       const roles = response?.data?.status;
       alert("Successfully registered" + response?.data?.password);
-      setfirstName("");
-      setlastName1("");
-      setlastName2("");
-      setofficePhoneNumber("");
-      setphoneNumber("");
-      setbranch("");
+      setFirstName("");
+      setLastName1("");
+      setLastName2("");
+      setOfficePhoneNumber("");
+      setPhoneNumber("");
+      setBranch("");
       setEmail("");
-      setphoto("");
-      navigate("/home-switch");
+      setPhoto("");
     } catch (err) {
       if (!err?.response) {
         setErrorMsg("No Server Response" + err);
@@ -75,7 +92,7 @@ export function EditProfessorPage() {
         console.log(err.response?.data);
         setErrorMsg("Login Failed" + err);
       }
-      errRef.current.focus();
+      errorRef.current.focus();
     }
   };
   return (
@@ -108,7 +125,7 @@ export function EditProfessorPage() {
                 </label>
                 <input
                   onChange={(e) => {
-                    setfirstName(e.target.value);
+                    setFirstName(e.target.value);
                   }}
                   className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   id="grid-first-name"
@@ -126,7 +143,7 @@ export function EditProfessorPage() {
                 </label>
                 <input
                   onChange={(e) => {
-                    setlastName1(e.target.value);
+                    setLastName1(e.target.value);
                   }}
                   className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   id="grid-last-name"
@@ -144,7 +161,7 @@ export function EditProfessorPage() {
                 </label>
                 <input
                   onChange={(e) => {
-                    setlastName2(e.target.value);
+                    setLastName2(e.target.value);
                   }}
                   className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   id="grid-last-name"
@@ -165,7 +182,7 @@ export function EditProfessorPage() {
                 </label>
                 <input
                   onChange={(e) => {
-                    setofficePhoneNumber(e.target.value);
+                    setOfficePhoneNumber(e.target.value);
                   }}
                   className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   id="grid-first-name"
@@ -183,7 +200,7 @@ export function EditProfessorPage() {
                 </label>
                 <input
                   onChange={(e) => {
-                    setphoneNumber(e.target.value);
+                    setPhoneNumber(e.target.value);
                   }}
                   className="appearance-none block w-full bg-white-200 text-gray-700 border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-white shadow-xl"
                   id="grid-last-name"
@@ -202,18 +219,18 @@ export function EditProfessorPage() {
                 <div className="relative">
                   <select
                     onChange={(e) => {
-                      setbranch(e.target.value);
+                      setBranch(e.target.value);
                     }}
                     className="appearance-none bg-white block w-full border rounded-2xl py-2 px-4 mb-3 leading-tight focus:outline-none focus:bg-gray-100 shadow-xl"
-                    
+                    //className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 shadow-lg"
                     id="grid-state"
                     value={branch}
                   >
-                    <option>Cartago</option>
-                    <option>Limón</option>
-                    <option>San Carlos</option>
-                    <option>San José</option>
-                    <option>Alajuela</option>
+                    <option value="CA">Cartago</option>
+                    <option value="LI">Limón</option>
+                    <option value="SC">San Carlos</option>
+                    <option value="SJ">San José</option>
+                    <option value="AL">Alajuela</option>
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg
@@ -324,15 +341,6 @@ export function EditProfessorPage() {
                       className="w-full justify-center text-white bg-primary-1000 hover:bg-primary-1000 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-00747F dark:hover:bg-primary-1000 dark:focus:ring-primary-800"
                     >
                       Editar
-                    </button>
-                  </div>
-
-                  <div className="max-w-full w-3/12 h-full ">
-                    <button
-                      type="submit"
-                      className="w-full justify-center text-white bg-primary-1000 hover:bg-primary-1000 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-00747F dark:hover:bg-primary-1000 dark:focus:ring-primary-800"
-                    >
-                      Dar de Baja
                     </button>
                   </div>
                 </div>

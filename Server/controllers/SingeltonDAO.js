@@ -433,55 +433,94 @@ class SingletonDAO {
 
 
     // modify professor
+    // async modifyProfessorData(req, res, next) {
+    //     try {
+    //         console.log("modifyProfessorData DAO");
+
+    //         //check for find the user usernames in the db
+    //         const jsonProfessor = req.body;
+    //         const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
+    //         const professorFoundByEmail = await Professor.findOne({ email: jsonProfessor.email }).exec();
+    //         const userFound = await User.findOne({ email: jsonProfessor.email }).exec();
+
+    //         if (!professorFound) {
+    //             return res.status(400).json({ message: 'This code dont exits ' });
+    //         } else if (professorFoundByEmail && userFound.email != professorFoundByEmail.email) {
+    //             return res.status(400).json({ message: 'This email is invalid for user' })
+    //         } else {
+
+    //             if (professorFound.code == professorFoundByEmail.code && professorFound.email == professorFoundByEmail.email) { //validaton for the email
+
+    //                 if (userFound.email != professorFoundByEmail.email) {
+    //                     await User.updateOne({ "email": professorFound.email }, { "email": jsonProfessor.email });
+    //                     console.log("never arrive here");
+    //                     await Professor.updateOne({ "code": jsonProfessor.code }, {
+    //                         "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
+    //                         "email": jsonProfessor.email, "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber,
+    //                         "photo": jsonProfessor.photo
+    //                     });
+    //                 } else if (userFound.email == professorFoundByEmail.email) {
+
+    //                     await Professor.updateOne({ "code": jsonProfessor.code }, {
+    //                         "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
+    //                         "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber,
+    //                         "photo": jsonProfessor.photo
+    //                     });
+    //                 }
+
+    //                 res.status(200).json({ state: true, message: 'The professor has been modified perfectly' });
+    //             } else {
+    //                 res.status(400).json({ state: false, message: 'Already exits a professor with this email' });
+    //             }
+
+
+    //         }
+
+    //     } catch (e) {
+    //         res.status(500).json({ message: `Server error: ${e}` });
+    //     }
+    //     next();
+    // }
+
     async modifyProfessorData(req, res, next) {
         try {
-
-            //check for find the user usernames in the db
-            const jsonProfessor = req.body;
-            const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
-            const professorFoundByEmail = await Professor.findOne({ email: jsonProfessor.email }).exec();
-            const userFound = await User.findOne({ email: jsonProfessor.email }).exec();
-
-            if (!professorFound) {
-                return res.status(400).json({ message: 'This code dont exits ' });
-            } else if (professorFoundByEmail && userFound.email != professorFoundByEmail.email) {
-                return res.status(400).json({ message: 'This email is invalid for user' })
-            } else {
-
-                if (professorFound.code == professorFoundByEmail.code && professorFound.email == professorFoundByEmail.email) { //validaton for the email
-
-                    if (userFound.email != professorFoundByEmail.email) {
-                        await User.updateOne({ "email": professorFound.email }, { "email": jsonProfessor.email });
-                        console.log("never arrive here");
-                        await Professor.updateOne({ "code": jsonProfessor.code }, {
-                            "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
-                            "email": jsonProfessor.email, "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber,
-                            "photo": jsonProfessor.photo
-                        });
-                    } else if (userFound.email == professorFoundByEmail.email) {
-
-                        await Professor.updateOne({ "code": jsonProfessor.code }, {
-                            "firstName": jsonProfessor.firstName, "lastName1": jsonProfessor.lastName1, "lastName2": jsonProfessor.lastName2,
-                            "officePhoneNumber": jsonProfessor.officePhoneNumber, "phoneNumber": jsonProfessor.phoneNumber,
-                            "photo": jsonProfessor.photo
-                        });
-                    }
-
-                    res.status(200).json({ state: true, message: 'The professor has been modified perfectly' });
-                } else {
-                    res.status(400).json({ state: false, message: 'Already exits a professor with this email' });
-                }
-
-
-            }
-
+          console.log("modifyProfessorData DAO");
+      
+          const jsonProfessor = req.body;
+          const professorFound = await Professor.findOne({ code: jsonProfessor.code }).exec();
+          const professorFoundByEmail = await Professor.findOne({ email: jsonProfessor.email }).exec();
+      
+          if (!professorFound) {
+            return res.status(400).json({ message: 'This code does not exist' });
+          }
+      
+          if (professorFoundByEmail && professorFoundByEmail.code !== professorFound.code) {
+            return res.status(400).json({ message: 'This email is invalid for the professor' });
+          }
+      
+          const updatedProfessorData = {
+            firstName: jsonProfessor.firstName,
+            lastName1: jsonProfessor.lastName1,
+            lastName2: jsonProfessor.lastName2,
+            email: jsonProfessor.email,
+            officePhoneNumber: jsonProfessor.officePhoneNumber,
+            phoneNumber: jsonProfessor.phoneNumber,
+            photo: jsonProfessor.photo
+          };
+      
+          // Update professor data
+          await Professor.updateOne({ code: jsonProfessor.code }, updatedProfessorData);
+      
+          // Check if the email needs to be updated in the User collection
+          if (professorFound.email !== jsonProfessor.email) {
+            await User.updateOne({ email: professorFound.email }, { email: jsonProfessor.email });
+          }
+      
+          res.status(200).json({ state: true, message: 'The professor has been modified successfully' });
         } catch (e) {
-            res.status(500).json({ message: `Server error: ${e}` });
+          res.status(500).json({ message: `Server error: ${e}` });
         }
-        next();
-    }
-
-
+      }
 
     // get all professor
     async getAllProfessor(req, res, next) {
@@ -526,33 +565,74 @@ class SingletonDAO {
 
     // modify professor
     async getProfessorById(req, res, next) {
+        console.log("Get Professor by ID DAO");
+
         try {
-
-            //check for find the user usernames in the db
-            const id = req.params.id;
-            const professorFound = await Professor.findOne({ code: id }).exec();
-
-            //print the professor
-            console.log(professorFound);
-
-
-            //agregate the branch
+          const id = req.params.id;
+          console.log("ID:", id);
+      
+          const professorFound = await Professor.findOne({ code: id }).exec();
+          console.log("Professor Found:", professorFound);
+      
+          if (!professorFound) {
+            console.log("Professor not found");
+            return res.status(400).json({ message: "This code does not exist" });
+          } else {
             const branchFound = await Branch.findOne({ code: professorFound.branch }).exec();
             professorFound.branch = branchFound.name;
-            if (!professorFound) {
-                return res.status(400).json({ message: 'This code dont exits ' });
-
-            } else {
-
-                res.status(200).json({ state: true, "professor": professorFound });
-
-            }
-
+      
+            console.log("Professor with Branch:", professorFound);
+      
+            return res.status(200).json({ state: true, professor: professorFound });
+          }
         } catch (e) {
-            res.status(500).json({ message: `Server error: ${e}` });
+          console.log("Server error:", e);
+          return res.status(500).json({ message: `Server error: ${e}` });
+        } finally {
+            next();
         }
-        next();
-    }
+        
+      }
+
+      async dissableProfessor(req, res, next) {
+
+        try{
+            const id = req.params.code;
+
+            console.log("ID:", id);
+
+            const professorFound = await Professor.findOne({ code: id });
+
+            const modfityProfessor = await Professor.updateOne({ "code": id }, { "status": false });
+
+            return res.status(200).json({ state: true, professor: professorFound });
+
+        }
+        catch(e){
+            res.status(500).json({ message: `Server error: ${e}` });
+        } finally {
+            next();
+        }
+
+      }
+
+      async enableProfessor(req, res, next) {
+        try {
+          const id = req.params.code;
+          const professorFound = await Professor.findOne({ code: id });
+          
+          if (!professorFound) {
+            return res.status(404).json({ message: 'Professor not found' });
+          }
+          
+          const modfityProfessor = await Professor.updateOne({ "code": id }, { "status": true });
+          return res.status(200).json({ state: true, professor: professorFound });
+      
+          return res.status(200).json({ message: 'Professor enabled successfully' });
+        } catch (error) {
+          return res.status(500).json({ message: `Error toggling professor status: ${error}` });
+        }
+      }
 
 
 
